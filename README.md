@@ -1,2 +1,2 @@
-# rock-paper-lidar-server
-REST API For Rock Paper Lidar
+# rock-paper-radar-server
+REST API For Rock Paper Radar
