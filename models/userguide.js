@@ -11,13 +11,69 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      userGuide.belongsTo(models.staff, {
+        foreignKey: 'staffID'
+      })
     }
   }
   userGuide.init({
-    staffID: DataTypes.INTEGER,
-    forUserType: DataTypes.STRING,
-    pictureUrl: DataTypes.STRING,
-    content: DataTypes.STRING
+    staffID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: {
+        msg: 'Staff profile already exists for this user',
+        args: true
+      },
+      validate: {
+        notNull: {
+          msg: 'StaffID cannot be null',
+          args: true
+        },
+        notEmpty: {
+          msg: 'StaffID cannot be empty',
+          args: true
+        }
+      }
+    },
+    forUserType: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        }
+      }
+    },
+    pictureUrl: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        }
+      }
+    },
+    content: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        }
+      }
+    },
   }, {
     sequelize,
     modelName: 'userGuide',

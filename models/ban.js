@@ -11,11 +11,47 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Ban.belongsTo(models.User, {
+        foreignKey: 'userId'
+      })
     }
   }
   Ban.init({
-    userID: DataTypes.INTEGER,
-    timestampUnbanned: DataTypes.DATE
+    //ban works by checking if timestampUnbanned is before current date
+    //timestampUnbanned is initialized with UNIX epoch - 1 Jan 1970 00:00:00UTC
+    //when user is banned, timestampUnbanned updated to when user will be unbanned
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Ban Row already exists for this user'
+      },
+      validate: {
+        notNull: {
+          msg: 'User ID cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'User ID cannot be empty',
+          args: true,
+        }
+      }
+    },
+    timestampUnbanned: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Timestamp Unbanned cannot be empty',
+          args: true
+        },
+        notEmpty: {
+          msg: 'Timestamp Unbanned cannot be empty',
+          args: true,
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Banned',

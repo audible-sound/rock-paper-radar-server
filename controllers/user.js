@@ -1,5 +1,5 @@
-const User = require('../model/user.js');
-const UserProfile = require('../model/userProfile.js');
+const User = require('../models/user.js');
+const UserProfile = require('../models/userprofile.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 

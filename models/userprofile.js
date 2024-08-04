@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: {
-        args: true,
-        msg: 'User profile already exists for this user'
+        msg: 'User profile already exists for this user',
+        args: true
       },
       validate: {
         notNull: {

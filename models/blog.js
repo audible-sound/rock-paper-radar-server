@@ -11,10 +11,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      blog.belongsTo(models.Staff, {
+        foreignKey: 'staffID'
+      })
     }
   }
   blog.init({
-    staffID: DataTypes.INTEGER,
+    staffID: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'StaffID cannot be null',
+          args: true
+        },
+        notEmpty: {
+          msg: 'staffID cannot be empty',
+          args: true
+        }
+      }
+    },
     blogPicture: DataTypes.STRING,
     blogContent: DataTypes.STRING,
     blogLikes: DataTypes.INTEGER
