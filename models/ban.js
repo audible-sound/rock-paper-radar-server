@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     //ban works by checking if timestampUnbanned is before current date
     //timestampUnbanned is initialized with UNIX epoch - 1 Jan 1970 00:00:00UTC
     //when user is banned, timestampUnbanned updated to when user will be unbanned
-    userId: {
+    userID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: {
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Banned',
+    modelName: 'Bans',
   });
-  return Banned;
+  return Ban;
 };

@@ -44,10 +44,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Username cannot be null',
           args: true
         },
-        notEmpty: {
-          msg: 'Username cannot be empty',
-          args: true
-        }
+        // notEmpty: {
+        //   msg: 'Username cannot be empty',
+        //   args: true
+        // }
       }
     },
     //TODO validate length
@@ -59,10 +59,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Password cannot be null',
           args: true
         },
-        NotEmpty: {
-          msg: 'Password cannot be empty',
-          args: true
-        }
+        // NotEmpty: {
+        //   msg: 'Password cannot be empty',
+        //   args: true
+        // }
       }
     },
     email: {
@@ -77,10 +77,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Email cannot be null',
           args: true,
         },
-        notEmpty: {
-          msg: 'Email cannot be empty',
-          args: true,
-        },
+        // notEmpty: {
+        //   msg: 'Email cannot be empty',
+        //   args: true,
+        // },
         isEmail: {
           msg: 'Email format is invalid',
           args: true,
@@ -96,10 +96,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'BirthDate cannot be null',
           args: true,
         },
-        notEmpty: {
-          msg: 'BirthDate cannot be empty',
-          args: true,
-        },
+        // notEmpty: {
+        //   msg: 'BirthDate cannot be empty',
+        //   args: true,
+        // },
         isDate: {
           msg: 'BirthDate must be a valid date',
           args: true,
@@ -118,10 +118,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Gender cannot be null',
           args: true,
         },
-        notEmpty: {
-          msg: 'Gender cannot be empty',
-          args: true,
-        }
+        // notEmpty: {
+        //   msg: 'Gender cannot be empty',
+        //   args: true,
+        // }
       }
     },
     /*
@@ -136,10 +136,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Country cannot be null',
           args: true,
         },
-        notEmpty: {
-          msg: 'Country cannot be empty',
-          args: true,
-        }
+        // notEmpty: {
+        //   msg: 'Country cannot be empty',
+        //   args: true,
+        // }
       }
     },
     /*
@@ -158,10 +158,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'PhoneNumber cannot be null',
           args: true,
         },
-        notEmpty: {
-          msg: 'PhoneNumber cannot be empty',
-          args: true,
-        }
+        // notEmpty: {
+        //   msg: 'PhoneNumber cannot be empty',
+        //   args: true,
+        // }
       }
     }
   }, {

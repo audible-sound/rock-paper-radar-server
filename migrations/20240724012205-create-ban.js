@@ -10,9 +10,17 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userID: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        unique: true,
+        references: {
+          model: "Users",
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       timestampUnbanned: {
+        allowNull: false,
         type: Sequelize.DATE
       },
       createdAt: {

@@ -15,12 +15,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE' 
-      });
-      User.hasOne(models.Ban, { 
+      })
+
+      User.hasOne(models.Bans, { 
         foreignKey: 'userId', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE' 
-      });
+      })
     }
   }
   User.init({
