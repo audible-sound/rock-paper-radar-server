@@ -62,8 +62,6 @@ class UserController {
                 profilePictureUrl
             } = req.body;
 
-            console.log(User);
-
             if (password!== confirmPassword) {
                 throw new Error('Passwords do not match');
             }
@@ -81,18 +79,20 @@ class UserController {
             });
             const createdUserProfile = await UserProfile.create({
                 profileDescription,
-                profilePictureUrl
+                profilePictureUrl,
+                userId: createdUser.id
             });
 
             const data = {
                 username: createdUser.username,
                 profilePictureUrl: createdUserProfile.profilePictureUrl
-            }
+            };
 
             const payload = {
                 username: createdUser.username,
                 date: new Date()
-            }
+            };
+
             const accessToken = createToken(payload);
 
             res.status(201).json({

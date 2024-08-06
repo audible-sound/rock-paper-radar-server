@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const createToken = (payload) => {
-    return jwt.sign(payload, process.env.JWT_TOKEN)
+    return jwt.sign(payload, process.env.JWT_SECRET)
 }
 
 const verifyToken = (token) => {
