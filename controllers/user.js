@@ -1,5 +1,4 @@
-const User = require('../models/user.js');
-const UserProfile = require('../models/userprofile.js');
+const { User, UserProfile } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -62,6 +61,8 @@ class UserController {
                 profileDescription,
                 profilePictureUrl
             } = req.body;
+
+            console.log(User);
 
             if (password!== confirmPassword) {
                 throw new Error('Passwords do not match');

@@ -20,5 +20,5 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Banned',
   });
-  return Banned;
+  return Ban;
 };
