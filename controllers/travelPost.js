@@ -1,4 +1,4 @@
-const Post = require('../models/post.js');
+const { Post } = require('../models/index.js');
 
 class TravelPostController {
     static async getPosts(req, res, next) {
