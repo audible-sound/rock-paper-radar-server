@@ -1,5 +1,5 @@
-const User = require('../model/user.js');
-const UserProfile = require('../model/userProfile.js');
+const User = require('../models/user.js');
+const UserProfile = require('../models/userprofile.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -18,17 +18,14 @@ class UserController {
             if (!actualUser) {
                 throw new Error('');
             }
-
             const isMatch = await comparePassword(password, actualUser.password);
             if (!isMatch) {
                 throw new Error('');
             }
-
             const data = {
                 username: actualUser.username,
                 profilePictureUrl: actualUser.UserProfile.profilePictureUrl
             }
-
             const payload = {
                 username: actualUser.username,
                 date: new Date()
@@ -56,6 +53,7 @@ class UserController {
             const {
                 username,
                 password,
+                confirmPassword,
                 email,
                 birthDate,
                 gender,
@@ -64,6 +62,10 @@ class UserController {
                 profileDescription,
                 profilePictureUrl
             } = req.body;
+
+            if (password!== confirmPassword) {
+                throw new Error('Passwords do not match');
+            }
 
             const hashedPassword = await hashPassword(password);
 
