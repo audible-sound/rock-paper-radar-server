@@ -11,20 +11,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // staff.hasOne(models.staffProfile, {
+      //   foreignKey: 'staffID',
+      //   onDelete: 'CASCADE',
+      //   onUpdate: 'CASCADE'
+      // })
+
+      // staff.hasMany(models.blog, {
+      //   foreignKey: 'staffID',
+      //   onDelete: 'CASCADE',
+      //   onUPDATE: 'CASCADE'
+      // })
+
+      // staff.hasMany(models.userGuide, {
+      //   foreignKey: 'staffID',
+      //   onDelete: 'CASCADE',
+      //   onUPDATE: 'CASCADE'
+      // })
       staff.hasOne(models.staffProfile, {
-        foreignKey: 'userId',
+        foreignKey: 'staffID',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       })
 
       staff.hasMany(models.blog, {
-        foreignKey: 'userId',
+        foreignKey: 'staffID',
         onDelete: 'CASCADE',
         onUPDATE: 'CASCADE'
       })
 
       staff.hasMany(models.userGuide, {
-        foreignKey: 'userId',
+        foreignKey: 'staffID',
         onDelete: 'CASCADE',
         onUPDATE: 'CASCADE'
       })
@@ -36,18 +53,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: {
         msg: 'Username is already taken',
-        args: true
+        // args: true
       },
       allowNull: false,
       validate: {
         notNull: {
           msg: 'Username cannot be null',
-          args: true
+          // args: true
         },
-        // notEmpty: {
-        //   msg: 'Username cannot be empty',
-        //   args: true
-        // }
+        notEmpty: {
+          msg: 'Username cannot be empty',
+          // args: true
+        }
       }
     },
     //TODO validate length
@@ -59,6 +76,24 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Password cannot be null',
           args: true
         },
+        // NotEmpty: {
+        //   msg: 'Password cannot be empty',
+        //   args: true
+        // }
+      }
+    },
+    userType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Staff user type cannot be null',
+          args: true
+        },
+        isIn: {
+          msg: 'Staff user type must either be "staff" or "admin"',
+          args: [['staff', 'admin']]
+        }
         // NotEmpty: {
         //   msg: 'Password cannot be empty',
         //   args: true

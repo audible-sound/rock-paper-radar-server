@@ -22,16 +22,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: {
         msg: 'Staff profile already exists for this user',
-        args: true
+        // args: true
       },
       validate: {
         notNull: {
           msg: 'StaffID cannot be null',
-          args: true
+          // args: true
         },
         notEmpty: {
           msg: 'StaffID cannot be empty',
-          args: true
+          // args: true
         }
       }
     },
@@ -41,11 +41,11 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {
           msg: 'Profile description cannot be null',
-          args: true
+          // args: true
         },
         notEmpty: {
           msg: 'Profile description cannot be empty',
-          args: true
+          // args: true
         }
       }
     },
@@ -55,15 +55,15 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {
           msg: 'Profile picture URL cannot be null',
-          args: true
+          // args: true
         },
         notEmpty: {
           msg: 'Profile picture URL cannot be empty',
-          args: true
+          // args: true
         },
         isURL: {
           msg: 'Profile picture URL must be a valid URL',
-          args: true
+          // args: true
         }
       }
     },
