@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Ban.belongsTo(models.User, {
-        foreignKey: 'userId'
+        foreignKey: 'userID'
       })
     }
   }
@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     userID: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'User',
+        key: 'id'
+      },
       unique: {
         args: true,
         msg: 'Ban Row already exists for this user'

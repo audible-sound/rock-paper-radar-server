@@ -1,5 +1,6 @@
-const User = require('../models').staff;
+const User = require('../models').User;
 const UserProfile = require('../models').UserProfile;
+const Ban = require('../models').Bans;
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -77,8 +78,13 @@ class UserController {
                 phoneNumber
             });
             const createdUserProfile = await UserProfile.create({
+                userId: createdUser.id,
                 profileDescription,
                 profilePictureUrl
+            });
+            const createdBan = await Ban.create({
+                userID: createdUser.id,
+                timestampUnbanned: new Date('January 1, 1970 00:00:00')
             });
 
             const data = {
@@ -98,6 +104,7 @@ class UserController {
                 accessToken
             })
         } catch (error) {
+            console.log(error);
             next(error);
         }
     }
