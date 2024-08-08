@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           msg: 'User Type cannot be empty',
           args: true
+        },
+        isIn: {
+          args: [['user', 'staff']],
+          msg: 'User type must be either user or staff'
         }
       }
     },
@@ -53,11 +57,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'User Type cannot be null',
+          msg: 'Picture URL cannot be null',
           args: true},
         notEmpty: {
-          msg: 'User Type cannot be empty',
+          msg: 'Picture URL cannot be empty',
           args: true
+        },
+        isUrl: {
+          msg: 'Picture Url must be a valid URL',
+          args: true,
         }
       }
     },
@@ -66,10 +74,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'User Type cannot be null',
+          msg: 'User guide content cannot be null',
           args: true},
         notEmpty: {
-          msg: 'User Type cannot be empty',
+          msg: 'User guide content cannot be empty',
           args: true
         }
       }

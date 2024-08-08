@@ -11,12 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // staff.hasOne(models.staffProfile, {
-      //   foreignKey: 'staffID',
-      //   onDelete: 'CASCADE',
-      //   onUpdate: 'CASCADE'
-      // })
-
+      
       // staff.hasMany(models.blog, {
       //   foreignKey: 'staffID',
       //   onDelete: 'CASCADE',
