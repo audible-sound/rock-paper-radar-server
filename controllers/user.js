@@ -1,8 +1,27 @@
-const { User, UserProfile } = require('../models/index.js');
+const { User, UserProfile, sequelize } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
 class UserController {
+    static async getPersonalProfile(req, res, next) {
+        try {
+            const { username } = req.decodedToken;
+            const actualUser = await User.findOne({
+                where: { username },
+                include: [UserProfile]
+            })
+            res.status(200).json({
+                message: 'Data retrieved successfully',
+                data: {
+                    username: actualUser.username,
+                    profilePictureUrl: actualUser.UserProfile.profilePictureUrl,
+                    joinedDate: actualUser.createdAt
+                }
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
     /*
     TO DO:
     - Error Handling
@@ -15,11 +34,11 @@ class UserController {
                 include: [UserProfile]
             });
             if (!actualUser) {
-                throw new Error('');
+                throw ({ name: "INVALID_USERNAME" });
             }
             const isMatch = await comparePassword(password, actualUser.password);
             if (!isMatch) {
-                throw new Error('');
+                throw ({ name: "INVALID_PASSWORD" });
             }
             const data = {
                 username: actualUser.username,
@@ -48,6 +67,7 @@ class UserController {
     - Error Handling
     */
     static async registerUser(req, res, next) {
+        const transaction = await sequelize.transaction();
         try {
             const {
                 username,
@@ -62,8 +82,8 @@ class UserController {
                 profilePictureUrl
             } = req.body;
 
-            if (password!== confirmPassword) {
-                throw new Error('Passwords do not match');
+            if (password !== confirmPassword) {
+                throw ({ name: "PASSWORDS_DO_NOT_MATCH" });
             }
 
             const hashedPassword = await hashPassword(password);
@@ -76,12 +96,19 @@ class UserController {
                 gender,
                 country,
                 phoneNumber
+            }, {
+                transaction
             });
+
             const createdUserProfile = await UserProfile.create({
                 profileDescription,
                 profilePictureUrl,
                 userId: createdUser.id
+            }, {
+                transaction
             });
+
+            await transaction.commit();
 
             const data = {
                 username: createdUser.username,
@@ -101,9 +128,13 @@ class UserController {
                 accessToken
             })
         } catch (error) {
+            if (error.name.includes('Sequelize')) {
+                await transaction.rollback();
+            }
             next(error);
         }
     }
+
 };
 
 module.exports = UserController;
