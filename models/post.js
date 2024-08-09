@@ -11,13 +11,86 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Post.belongsTo(models.User, {
+        foreignKey: 'userId'
+      });
+      Post.hasMany(models.Comment, {
+        foreignKey: 'postId', 
+        onDelete: 'CASCADE', 
+        onUpdate: 'CASCADE'
+      });
     }
   }
   Post.init({
-    userID: DataTypes.INTEGER,
-    pictureUrl: DataTypes.STRING,
-    postContent: DataTypes.STRING,
-    postLikes: DataTypes.INTEGER
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'UserId cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'UserId cannot be empty',
+          args: true,
+        }
+      }
+    },
+    pictureUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Picture URL cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'Picture URL cannot be empty',
+          args: true,
+        },
+        isUrl: {
+          msg: 'Picture URL must be a valid URL',
+          args: true,
+        }
+      }
+
+    },
+    postContent: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Post content cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'Post content cannot be empty',
+          args: true,
+        }
+      }
+    },
+    postLikes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Post likes cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'Post likes cannot be empty',
+          args: true,
+        },
+        isInt: {
+          msg: 'Post likes must be an integer',
+          args: true,
+        },
+        min: {
+          args: 0,
+          msg: 'Post likes must be a positive integer or zero'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Post',

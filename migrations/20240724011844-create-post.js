@@ -9,17 +9,31 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
-        type: Sequelize.INTEGER
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
+      /*
+      To do:
+      - Seperate pictures to another table
+      */
       pictureUrl: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       postContent: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       postLikes: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
