@@ -10,12 +10,21 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       staffID: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        unique: true,
+        references: {
+          model: "staffs",
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       profileDescription: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       pictureUrl: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       createdAt: {

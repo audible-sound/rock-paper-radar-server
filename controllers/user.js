@@ -1,4 +1,4 @@
-const { User, UserProfile, sequelize } = require('../models/index.js');
+const { User, UserProfile, sequelize, Ban } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -101,11 +101,16 @@ class UserController {
             });
 
             const createdUserProfile = await UserProfile.create({
+                userId: createdUser.id,
                 profileDescription,
                 profilePictureUrl,
                 userId: createdUser.id
             }, {
                 transaction
+            });
+            const createdBan = await Ban.create({
+                userID: createdUser.id,
+                timestampUnbanned: new Date('January 1, 1970 00:00:00')
             });
 
             await transaction.commit();

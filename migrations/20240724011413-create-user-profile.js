@@ -2,6 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    
     await queryInterface.createTable('UserProfiles', {
       id: {
         allowNull: false,
@@ -13,7 +14,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true,
         references: {
-          model: 'Users',
+          model: "Users",
           key: 'id'
         },
         onDelete: 'CASCADE',

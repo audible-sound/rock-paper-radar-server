@@ -11,13 +11,77 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      userGuide.belongsTo(models.staff, {
+        foreignKey: 'staffID'
+      })
     }
   }
   userGuide.init({
-    staffID: DataTypes.INTEGER,
-    forUserType: DataTypes.STRING,
-    pictureUrl: DataTypes.STRING,
-    content: DataTypes.STRING
+    staffID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: {
+        msg: 'Staff profile already exists for this user',
+        args: true
+      },
+      validate: {
+        notNull: {
+          msg: 'StaffID cannot be null',
+          args: true
+        },
+        notEmpty: {
+          msg: 'StaffID cannot be empty',
+          args: true
+        }
+      }
+    },
+    forUserType: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        },
+        isIn: {
+          args: [['user', 'staff']],
+          msg: 'User type must be either user or staff'
+        }
+      }
+    },
+    pictureUrl: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Picture URL cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Picture URL cannot be empty',
+          args: true
+        },
+        isUrl: {
+          msg: 'Picture Url must be a valid URL',
+          args: true,
+        }
+      }
+    },
+    content: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User guide content cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User guide content cannot be empty',
+          args: true
+        }
+      }
+    },
   }, {
     sequelize,
     modelName: 'userGuide',

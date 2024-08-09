@@ -1,21 +1,21 @@
 {
   "development": {
-    "username": "audywallace",
-    "password": "audywallace",
+    "username": "Albert",
+    "password": "admin",
     "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
   },
   "test": {
-    "username": "audywallace",
-    "password": "audywallace",
+    "username": "Albert",
+    "password": "admin",
     "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
   },
   "production": {
-    "username": "audywallace",
-    "password": "audywallace",
+    "username": "Albert",
+    "password": "admin",
     "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"

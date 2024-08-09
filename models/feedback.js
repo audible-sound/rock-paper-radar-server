@@ -14,9 +14,45 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   feedback.init({
-    userID: DataTypes.INTEGER,
-    feedbackContent: DataTypes.STRING,
-    pictureUrl: DataTypes.STRING
+    userID: {
+      type: 'DataTypes.INTEGER',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'UserID cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'UserID cannot be empty',
+          args: true
+        }
+      }
+    },
+    feedbackContent: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Feedback content cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Feedback content cannot be empty',
+          args: true
+        }
+      }
+    },
+    pictureUrl: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Picture URL cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Picture URL cannot be empty',
+          args: true
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'feedback',
