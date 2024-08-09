@@ -1,4 +1,4 @@
-const { Post } = require('../models/index.js');
+const { Post, User } = require('../models/index.js');
 
 class TravelPostController {
     static async getPosts(req, res, next) {
@@ -30,7 +30,13 @@ class TravelPostController {
 
     static async createPost(req, res, next) {
         try {
-            const { userId, pictureUrl, postContent} = req.body;
+            const { username } = req.decodedToken;
+            const { pictureUrl, postContent} = req.body;
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+            const userId = actualUser.id;
             const newPost = await Post.create({ userId, pictureUrl, postContent });
             res.status(201).json({
                 data: newPost,
