@@ -8,9 +8,9 @@ const feedbackRouter = require('./feedback.js');
 const bugReportRouter = require('./bugReport.js');
 
 router.use('/user', userRouter);
-router.use('/staff', staffRouter);
-router.use('/blog', blogRouter);
-router.use('/userguide', userGuideRouter);
+// router.use('/staff', staffRouter);
+// router.use('/blog', blogRouter);
+// router.use('/userguide', userGuideRouter);
 router.use('/travelPost', travelPostRouter);
 router.use('/feedback', feedbackRouter);
 router.use('/bugreport', bugReportRouter);

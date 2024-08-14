@@ -23,11 +23,19 @@ module.exports = {
       To do:
       - Seperate pictures to another table
       */
+      postTitle: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       pictureUrl: {
         type: Sequelize.STRING,
         allowNull: false
       },
       postContent: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      location: {
         type: Sequelize.STRING,
         allowNull: false,
       },

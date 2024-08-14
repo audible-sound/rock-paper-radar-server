@@ -3,13 +3,13 @@ const authHandler = require('../middlewares/authorization.js');
 const TravelPostController = require('../controllers/travelPost.js');
 
 /*
-Implement for authprization for post requests
+Implement for authorization for post requests
 */
 router.get('/', TravelPostController.getPosts);
-router.get('/:id', TravelPostController.getPostById);
+router.get('/post', TravelPostController.getPostById);
+router.get('/username', TravelPostController.getUserPosts);
 
 router.post('/', authHandler, TravelPostController.createPost);
-
-router.put('/:id', TravelPostController.likePost);
+router.put('/:id', authHandler, TravelPostController.likePost);
 
 module.exports = router;
