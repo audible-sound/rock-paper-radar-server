@@ -56,7 +56,7 @@ class UserController {
             const { username, password } = req.body;
             const actualUser = await User.findOne({
                 where: { username },
-                include: [UserProfile]
+                include: [UserProfile, Bans]
             });
             if (!actualUser) {
                 throw ({ name: "INVALID_USERNAME" });
@@ -65,14 +65,19 @@ class UserController {
             if (!isMatch) {
                 throw ({ name: "INVALID_PASSWORD" });
             }
+            if(actualUser.Ban.timestampUnbanned > new Date()){
+                throw ({ name: "USER_BANNED" });
+            }
             const data = {
                 username: actualUser.username,
                 profilePictureUrl: actualUser.UserProfile.profilePictureUrl
             }
             const payload = {
-                username: actualUser.username,
+                username: createdUser.username,
+                id: createdUser.id,
+                userType: 'user',
                 date: new Date()
-            }
+            };
             const accessToken = createToken(payload);
 
             res.status(200).json({
@@ -127,6 +132,7 @@ class UserController {
             }, {
                 transaction
             });
+
             // const createdBan = await Ban.create({
             //     userID: createdUser.id,
             //     timestampUnbanned: new Date('January 1, 1970 00:00:00')
@@ -141,6 +147,8 @@ class UserController {
 
             const payload = {
                 username: createdUser.username,
+                id: createdUser.id,
+                userType: 'user',
                 date: new Date()
             };
 
