@@ -10,15 +10,26 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userID: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
+      userType: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        validate: {
+          isIn: [['user', 'staff', 'admin']]
+        }
+      },
       bugContent: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       pictureUrl: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       bugState: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       createdAt: {

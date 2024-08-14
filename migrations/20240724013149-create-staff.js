@@ -20,7 +20,10 @@ module.exports = {
       },
       userType: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          inIn: [['staff', 'admin']]
+        }
       },
       email: {
         type: Sequelize.STRING,
