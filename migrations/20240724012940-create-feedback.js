@@ -10,10 +10,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userID: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+          isIn: [['user', 'staff', 'admin']]
+        }
+      },
+      userType: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       feedbackContent: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       pictureUrl: {
         type: Sequelize.STRING

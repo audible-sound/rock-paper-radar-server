@@ -27,6 +27,19 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    userType: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        }
+      }
+    },
     feedbackContent: {
       type: 'DataTypes.STRING',
       allowNull: false,
@@ -50,7 +63,8 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           msg: 'Picture URL cannot be empty',
           args: true
-        }
+        },
+        isUrl: true,
       }
     }
   }, {

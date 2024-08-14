@@ -11,23 +11,33 @@ module.exports = {
       },
       staffID: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "staffs",
           key: 'id'
         }
       },
+      blogTitle: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       blogPicture: {
         type: Sequelize.STRING
       },
       blogContent: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       blogLikes: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: {
+          min: -1
+        }
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
