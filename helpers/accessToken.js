@@ -8,8 +8,7 @@ const createToken = (payload) => {
 }
 
 const verifyToken = (token) => {
-    // return jwt.verify(token, process.env.JWT_SECRET);
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, process.env.JWT_SECRET);
 }
 
 module.exports = {

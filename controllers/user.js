@@ -1,4 +1,4 @@
-const { User, UserProfile, sequelize, Ban } = require('../models/index.js');
+const { User, UserProfile, sequelize, Ban, Post } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -9,23 +9,48 @@ class UserController {
             const actualUser = await User.findOne({
                 where: { username },
                 include: [UserProfile]
-            })
+            });
+            const totalPosts = await Post.count({
+                where: { userId: actualUser.id }
+            });
             res.status(200).json({
                 message: 'Data retrieved successfully',
                 data: {
                     username: actualUser.username,
                     profilePictureUrl: actualUser.UserProfile.profilePictureUrl,
-                    joinedDate: actualUser.createdAt
+                    joinedDate: actualUser.createdAt,
+                    totalPosts
                 }
-            })
+            });
         } catch (error) {
             next(error);
         }
     }
-    /*
-    TO DO:
-    - Error Handling
-    */
+
+    static async getUserProfile(req, res, next) {
+        try {
+            const { username } = req.query.username;
+            const actualUser = await User.findOne({
+                where: { username },
+                include: [UserProfile]
+            });
+            const totalPosts = await Post.count({
+                where: { userId: actualUser.id }
+            });
+            res.status(200).json({
+                message: 'Data retrieved successfully',
+                data: {
+                    username: actualUser.username,
+                    profilePictureUrl: actualUser.UserProfile.profilePictureUrl,
+                    joinedDate: new Date(actualUser.createdAt),
+                    totalPosts
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     static async signIn(req, res, next) {
         try {
             const { username, password } = req.body;
@@ -60,12 +85,6 @@ class UserController {
         }
     }
 
-    /*
-    TO DO:
-    - Data insertion transaction
-    - Password Comparison
-    - Error Handling
-    */
     static async registerUser(req, res, next) {
         const transaction = await sequelize.transaction();
         try {
@@ -108,10 +127,10 @@ class UserController {
             }, {
                 transaction
             });
-            const createdBan = await Ban.create({
-                userID: createdUser.id,
-                timestampUnbanned: new Date('January 1, 1970 00:00:00')
-            });
+            // const createdBan = await Ban.create({
+            //     userID: createdUser.id,
+            //     timestampUnbanned: new Date('January 1, 1970 00:00:00')
+            // });
 
             await transaction.commit();
 

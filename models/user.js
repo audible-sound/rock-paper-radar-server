@@ -16,24 +16,27 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE' 
       });
-
       User.hasOne(models.Bans, { 
         foreignKey: 'userID', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE' 
       });
-      
       User.hasMany(models.Post, {
         foreignKey: 'userId', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'
       });
-      
       User.hasMany(models.Comment, {
         foreignKey: 'userId', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'
       });
+      User.hasMany(models.UserLike, {
+        foreignKey: 'userId', 
+        onDelete: 'CASCADE', 
+        onUpdate: 'CASCADE'
+      });
+    }
   }
   User.init({
     /*

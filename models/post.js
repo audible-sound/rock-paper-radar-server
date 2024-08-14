@@ -19,6 +19,16 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'
       });
+      Post.hasMany(models.UserLike, {
+        foreignKey: 'postId', 
+        onDelete: 'CASCADE', 
+        onUpdate: 'CASCADE'
+      });
+      Post.hasMany(models.PostTag, {
+        foreignKey: 'postId', 
+        onDelete: 'CASCADE', 
+        onUpdate: 'CASCADE'
+      });
     }
   }
   Post.init({
@@ -55,6 +65,20 @@ module.exports = (sequelize, DataTypes) => {
       }
 
     },
+    postTitle: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Post Title cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'Post Title cannot be empty',
+          args: true,
+        }
+      }
+    },
     postContent: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -68,6 +92,20 @@ module.exports = (sequelize, DataTypes) => {
           args: true,
         }
       }
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'location cannot be null',
+          args: true,
+        },
+        notEmpty: {
+          msg: 'location cannot be empty',
+          args: true,
+        }
+      }      
     },
     postLikes: {
       type: DataTypes.INTEGER,
@@ -86,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
           args: true,
         },
         min: {
-          args: 0,
+          args: [0],
           msg: 'Post likes must be a positive integer or zero'
         }
       }

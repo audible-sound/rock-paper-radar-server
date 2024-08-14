@@ -5,5 +5,6 @@ const authHandler = require('../middlewares/authorization.js');
 router.post('/signin', UserController.signIn);
 router.post('/register', UserController.registerUser);
 router.get('/personalProfile', authHandler, UserController.getPersonalProfile);
+router.get('/profile', authHandler, UserController.getUserProfile);
 
 module.exports = router;
