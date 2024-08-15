@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   UserLike.init({
     userId: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
       allowNull: false,
       validate: {
         notNull: {

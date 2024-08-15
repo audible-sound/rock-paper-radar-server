@@ -29,7 +29,7 @@ class UserController {
 
     static async getUserProfile(req, res, next) {
         try {
-            const { username } = req.query.username;
+            const { username } = req.query;
             const actualUser = await User.findOne({
                 where: { username },
                 include: [UserProfile]
@@ -43,7 +43,13 @@ class UserController {
                     username: actualUser.username,
                     profilePictureUrl: actualUser.UserProfile.profilePictureUrl,
                     joinedDate: new Date(actualUser.createdAt),
-                    totalPosts
+                    totalPosts,
+                    birthDate: new Date(actualUser.birthDate),
+                    gender: actualUser.gender,
+                    country: actualUser.country,
+                    phoneNumber: actualUser.phoneNumber,
+                    profileDescription: actualUser.UserProfile.profileDescription,
+                    email: actualUser.email
                 }
             });
         } catch (error) {
@@ -158,7 +164,57 @@ class UserController {
             next(error);
         }
     }
-
+    static async updateUserProfile(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { username } = req.decodedToken;
+            const {
+                email,
+                birthDate,
+                gender,
+                country,
+                phoneNumber,
+                profileDescription,
+                profilePictureUrl
+            } = req.body;
+    
+            const actualUser = await User.findOne({
+                where: { username },
+                include: [UserProfile]
+            });
+    
+            if (!actualUser) {
+                throw ({ name: "USER_NOT_FOUND" });
+            }
+    
+            // Update User model
+            await actualUser.update({
+                email,
+                birthDate,
+                gender,
+                country,
+                phoneNumber
+            }, { transaction });
+    
+            // Update UserProfile model
+            await actualUser.UserProfile.update({
+                profileDescription,
+                profilePictureUrl
+            }, { transaction });
+    
+            await transaction.commit();
+    
+            res.status(200).json({
+                message: 'User profile updated successfully',
+                data: {
+                    profilePictureUrl: actualUser.UserProfile.profilePictureUrl,
+                }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+    }
 };
 
 module.exports = UserController;
