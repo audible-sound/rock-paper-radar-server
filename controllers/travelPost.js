@@ -1,4 +1,4 @@
-const { Post, User, UserLike, PostTag, UserProfile, ReportPost, sequelize } = require('../models/index.js');
+const { Post, User, UserLike, PostTag, UserProfile, Comment, ReportPost, sequelize } = require('../models/index.js');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 
@@ -24,7 +24,8 @@ class TravelPostController {
             }
             const userId = actualUser.id;
             const posts = await Post.findAll({
-                where: { userId }, include: {
+                where: { userId },
+                include: {
                     model: PostTag,
                     where: {
                         postId: { [op.col]: 'Post.id' }
@@ -47,12 +48,15 @@ class TravelPostController {
     static async getPostById(req, res, next) {
         try {
             const post = await Post.findOne({
-                where: { id: parseInt(req.query.postId) }, include: {
-                    model: PostTag,
-                    where: {
-                        postId: { [op.col]: 'Post.id' }
+                where: { id: parseInt(req.query.postId) },
+                include: [
+                    {
+                        model: PostTag,
+                        where: {
+                            postId: { [op.col]: 'Post.id' }
+                        }
                     }
-                }
+                ]
             });
             if (!post) {
                 throw new Error('Post not found');
@@ -129,9 +133,23 @@ class TravelPostController {
                 }
             });
             if (likeExists) {
+                await UserLike.destroy({
+                    where: {
+                        userId,
+                        postId: id
+                    }
+                }, { transaction });
+
+                const updatedPost = await Post.decrement('postLikes', {
+                    by: 1,
+                    where: { id }
+                }, { transaction });
+
+                await transaction.commit();
+
                 res.status(200).json({
                     data: updatedPost,
-                    msg: 'Post already liked'
+                    msg: 'Post unliked successfully'
                 });
             } else {
                 await UserLike.create({
@@ -151,6 +169,65 @@ class TravelPostController {
                 });
             }
         } catch (error) {
+            next(error);
+        }
+    }
+
+    static async checkUserLikedPost(req, res, next) {
+        try {
+            const { username } = req.decodedToken;
+            const { postId } = req.params;
+
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
+            const userId = actualUser.id;
+            const likeExists = await UserLike.findOne({
+                where: {
+                    userId,
+                    postId
+                }
+            });
+
+            res.status(200).json({
+                liked: (likeExists ? true : false),
+                msg: 'User like status retrieved successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async deletePost(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { id } = req.params;
+            const { username } = req.decodedToken;
+
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
+            const post = await Post.findOne({ where: { id, userId: actualUser.id } });
+            if (!post) {
+                throw new Error('POST_NOT_FOUND');
+            }
+
+            await PostTag.destroy({ where: { postId: id }, transaction });
+            await UserLike.destroy({ where: { postId: id }, transaction });
+            await Comment.destroy({ where: { postId: id }, transaction });
+            await Post.destroy({ where: { id }, transaction });
+
+            await transaction.commit();
+
+            res.status(200).json({
+                message: 'Post deleted successfully'
+            });
+        } catch (error) {
+            await transaction.rollback();
             next(error);
         }
     }
