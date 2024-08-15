@@ -19,5 +19,4 @@
     "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
-  }
-}
+  }}
