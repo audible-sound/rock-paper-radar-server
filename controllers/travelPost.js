@@ -270,6 +270,7 @@ class TravelPostController {
                 throw new Error('POST_NOT_FOUND');
             }
 
+            await PostTag.destroy({ where: { postId: post.id }, transaction });
             await post.update({
                 pictureUrl,
                 postTitle,
@@ -277,7 +278,6 @@ class TravelPostController {
                 location: postLocation
             }, { transaction });
 
-            await PostTag.destroy({ where: { postId: id }, transaction });
 
             for (let i = 0; i < categories.length; i++) {
                 await PostTag.create({
