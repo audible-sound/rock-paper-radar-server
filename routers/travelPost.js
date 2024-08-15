@@ -12,4 +12,6 @@ router.get('/username', TravelPostController.getUserPosts);
 router.post('/', authHandler, TravelPostController.createPost);
 router.put('/:id', authHandler, TravelPostController.likePost);
 
+router.post('/reportPost',authHandler,TravelPostController.createReportPost);
+
 module.exports = router;

@@ -1,4 +1,4 @@
-const {staff, staffProfile, sequelize} = require("../models/index.js");
+const {staff, staffProfile, sequelize, ReportPost} = require("../models/index.js");
 const {hashPassword, comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
 
@@ -169,6 +169,23 @@ class staffController{
         }
     }
 
+    static async getReportPost(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            
+            const UserReports = await ReportPost.findAll();
+
+            res.status(200).json({
+                data: UserReports,
+                msg: 'User Report retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }  
 };
 
 module.exports = staffController;
