@@ -12,6 +12,7 @@ router.get('/verifyLike/:postId', authHandler, TravelPostController.checkUserLik
 
 router.post('/', authHandler, TravelPostController.createPost);
 router.put('/like/:id', authHandler, TravelPostController.likePost);
+router.put('/:id', authHandler, TravelPostController.editPost);
 router.delete('/:id', authHandler, TravelPostController.deletePost);
 
 module.exports = router;
