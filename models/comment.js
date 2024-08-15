@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Comment.init({
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     postId: {
       type: DataTypes.INTEGER,
