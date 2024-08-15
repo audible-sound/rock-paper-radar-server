@@ -11,18 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      
-      // staff.hasMany(models.blog, {
-      //   foreignKey: 'staffID',
-      //   onDelete: 'CASCADE',
-      //   onUPDATE: 'CASCADE'
-      // })
 
-      // staff.hasMany(models.userGuide, {
-      //   foreignKey: 'staffID',
-      //   onDelete: 'CASCADE',
-      //   onUPDATE: 'CASCADE'
-      // })
       staff.hasOne(models.staffProfile, {
         foreignKey: 'staffID',
         onDelete: 'CASCADE',
@@ -48,17 +37,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: {
         msg: 'Username is already taken',
-        // args: true
+        args: true
       },
       allowNull: false,
       validate: {
         notNull: {
           msg: 'Username cannot be null',
-          // args: true
+          args: true
         },
         notEmpty: {
           msg: 'Username cannot be empty',
-          // args: true
+          args: true
         }
       }
     },
@@ -70,11 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Password cannot be null',
           args: true
-        },
-        // NotEmpty: {
-        //   msg: 'Password cannot be empty',
-        //   args: true
-        // }
+        }
       }
     },
     userType: {
@@ -89,10 +74,6 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Staff user type must either be "staff" or "admin"',
           args: [['staff', 'admin']]
         }
-        // NotEmpty: {
-        //   msg: 'Password cannot be empty',
-        //   args: true
-        // }
       }
     },
     email: {
@@ -107,10 +88,6 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Email cannot be null',
           args: true,
         },
-        // notEmpty: {
-        //   msg: 'Email cannot be empty',
-        //   args: true,
-        // },
         isEmail: {
           msg: 'Email format is invalid',
           args: true,
@@ -126,10 +103,6 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'BirthDate cannot be null',
           args: true,
         },
-        // notEmpty: {
-        //   msg: 'BirthDate cannot be empty',
-        //   args: true,
-        // },
         isDate: {
           msg: 'BirthDate must be a valid date',
           args: true,
@@ -147,11 +120,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Gender cannot be null',
           args: true,
-        },
-        // notEmpty: {
-        //   msg: 'Gender cannot be empty',
-        //   args: true,
-        // }
+        }
       }
     },
     /*
@@ -165,11 +134,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Country cannot be null',
           args: true,
-        },
-        // notEmpty: {
-        //   msg: 'Country cannot be empty',
-        //   args: true,
-        // }
+        }
       }
     },
     /*
@@ -187,11 +152,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'PhoneNumber cannot be null',
           args: true,
-        },
-        // notEmpty: {
-        //   msg: 'PhoneNumber cannot be empty',
-        //   args: true,
-        // }
+        }
       }
     }
   }, {

@@ -14,10 +14,71 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   BugReport.init({
-    userID: DataTypes.INTEGER,
-    bugContent: DataTypes.STRING,
-    pictureUrl: DataTypes.STRING,
-    bugState: DataTypes.STRING
+    userID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'UserID cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'UserID cannot be empty',
+          args: true
+        }
+      }
+    },
+    userType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User Type cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User Type cannot be empty',
+          args: true
+        }
+      }
+    }, 
+    bugContent: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Bug content cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'But content cannot be empty',
+          args: true
+        }
+      }
+    }, 
+    pictureUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Picture URL cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Picture URL cannot be empty',
+          args: true
+        }
+      }
+    }, 
+    bugState: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Bug state cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Bug state cannot be empty',
+          args: true
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'BugReport',
