@@ -18,6 +18,9 @@ function ErrorHandler (err, req, res, next) {
     } else if (err.name === 'PASSWORDS_DO_NOT_MATCH') {
         statusCode = 400;
         message = 'Passwords do not match';
+    } else if (err.name === 'MISSING_INPUT') {
+        statusCode = 400;
+        message = 'Request does not have all required inputs';
     } else if (err.name === 'NO_CREDENTIALS') {
         statusCode = 403;
         message = 'No credentials provided';

@@ -1,9 +1,9 @@
-const { Post, User } = require('../models/index.js');
+const { Posts, User } = require('../models/index.js');
 
 class TravelPostController {
     static async getPosts(req, res, next) {
         try {
-            const posts = await Post.findAll();
+            const posts = await Posts.findAll();
             res.status(200).json({
                 data: posts,
                 msg: 'Posts retrived successfully'
@@ -15,7 +15,7 @@ class TravelPostController {
 
     static async getPostById(req, res, next) {
         try {
-            const post = await Post.findById(req.params.id);
+            const post = await Posts.findById(req.params.id);
             if (!post) {
                 throw new Error('Post not found');
             }
@@ -37,7 +37,7 @@ class TravelPostController {
                 throw new Error('USER_NOT_FOUND');
             }
             const userId = actualUser.id;
-            const newPost = await Post.create({ userId, pictureUrl, postContent });
+            const newPost = await Posts.create({ userId, pictureUrl, postContent });
             res.status(201).json({
                 data: newPost,
                 msg: 'Post created successfully'
@@ -50,7 +50,7 @@ class TravelPostController {
     static async likePost(req, res, next) {
         try {
             const { id } = req.params;
-            const updatedPost = await Post.update({
+            const updatedPost = await Posts.update({
                 where: {
                     id
                 }
