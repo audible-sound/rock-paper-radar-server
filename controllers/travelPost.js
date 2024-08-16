@@ -251,7 +251,7 @@ class TravelPostController {
                 userId,
                 postId,
                 reportState: 'unverified',
-                reportContent:"hishdfihasi",
+                reportContent,
             }, { transaction });
             await transaction.commit();
 
@@ -261,7 +261,8 @@ class TravelPostController {
             }
 
             res.status(201).json({
-                msg: 'Report post created successfully'
+                msg: 'Report post created successfully',
+                data
             });
         } catch (error) {
             next(error);

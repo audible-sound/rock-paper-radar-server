@@ -8,5 +8,6 @@ router.get('/personalProfile', authHandler, staffController.getPersonalProfile);
 router.put('/editProfile', authHandler, staffController.editstaffProfile);
 
 router.get('/reportPost', authHandler, staffController.getReportPost)
+router.post('/bannedPost',authHandler,staffController.createBannedPost)
 
 module.exports = router

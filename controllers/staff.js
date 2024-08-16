@@ -1,4 +1,4 @@
-const {staff, staffProfile, sequelize, ReportPost} = require("../models/index.js");
+const {staff, staffProfile, sequelize, ReportPost,BannedPost} = require("../models/index.js");
 const {hashPassword, comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
 
@@ -185,7 +185,43 @@ class staffController{
         }catch(error){
             next(error)
         }
-    }  
+    }
+    
+    static async createBannedPost(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            const { username } = req.decodedToken;
+            const actualUser = await staff.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
+            const {
+                reportId,
+            } = req.body;
+
+            const createdBannedPost = await BannedPost.create({
+                reportId,
+            }, { transaction });
+            await transaction.commit();
+
+            const data = {
+                id: createdBannedPost.id,
+                date: createdBannedPost.createdAt                
+            }
+
+            res.status(201).json({
+                msg: 'Banned post created successfully',
+                data
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 };
 
 module.exports = staffController;
