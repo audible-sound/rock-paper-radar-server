@@ -18,7 +18,7 @@ module.exports = {
           updatedAt: new Date()
         });
 
-        ['Relaxation', 'Adventure', 'Sightseeing', 'Culture'].forEach(tag => {
+        ['Historical', 'Scenery', 'Food', 'Adventure', 'Nature'].forEach(tag => {
           travelTags.push({
             name: tag,
             travelId: travelPlanId,
