@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Ban extends Model {
+  class userBan extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Ban.belongsTo(models.User, {
+      userBan.belongsTo(models.User, {
         foreignKey: 'userID'
       })
     }
   }
-  Ban.init({
+  userBan.init({
     //ban works by checking if timestampUnbanned is before current date
     //timestampUnbanned is initialized with UNIX epoch - 1 Jan 1970 00:00:00UTC
     //when user is banned, timestampUnbanned updated to when user will be unbanned
@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Bans',
+    modelName: 'userBans',
   });
-  return Ban;
+  return userBan;
 };
