@@ -1,5 +1,5 @@
 const {staff, staffProfile, sequelize} = require("../models/index.js");
-const {hashPassword, comparePassword} = require("../helpers/encryption.js");
+const {comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
 
 class staffController{
@@ -93,78 +93,6 @@ class staffController{
                 accessToken
             });
         }catch(error){
-            next(error);
-        }
-    }
-
-    static async registerStaff(req, res, next){
-        const transaction = await sequelize.transaction();
-        try{
-            const{
-                username,
-                password,
-                confirmPassword,
-                userType,
-                email,
-                birthDate,
-                gender,
-                country,
-                phoneNumber,
-                profileDescription,
-                pictureUrl
-            } = req.body;
-
-            if(password != confirmPassword){
-                throw({name: "PASSWORDS_DO_NOT_MATCH"});
-            }
-
-            const hashedPassword = await hashPassword(password);
-
-            const createdStaff = await staff.create({
-                username,
-                password: hashedPassword,
-                userType,
-                email,
-                birthDate,
-                gender,
-                country,
-                phoneNumber
-            }, {
-                transaction
-            });
-
-            const createdStaffProfile = await staffProfile.create({
-                staffID: createdStaff.id,
-                profileDescription: profileDescription,
-                pictureUrl: pictureUrl
-            }, {
-                transaction
-            });
-
-            await transaction.commit();
-
-            const data = {
-                username: createdStaff.username,
-                pictureUrl: createdStaffProfile.profilePicture
-            }
-
-            const payload = {
-                username: createdStaff.username,
-                id: createdStaff.id,
-                userType: createdStaff.userType,
-                date: new Date()
-            }
-            const accessToken = createToken(payload);
-
-            res.status(201).json({
-                message: 'Staff registered successfully',
-                data,
-                accessToken
-            })
-        }catch(error){
-            if(error.name.includes('Sequelize')){
-                await transaction.rollback();
-            }
             next(error);
         }
     }
