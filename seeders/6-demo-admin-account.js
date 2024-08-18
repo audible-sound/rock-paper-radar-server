@@ -31,7 +31,7 @@ module.exports = {
       id: 1,
       staffID: 1,
       profileDescription: 'test',
-      pictureUrl: 'http://test.com',
+      pictureUrl: 'https://pbs.twimg.com/media/CT8iWc8VEAAGdNX.jpg',
       createdAt: '2024-08-17 17:56:17.978+08',
       updatedAt: '2024-08-17 17:56:17.978+08'
     }])

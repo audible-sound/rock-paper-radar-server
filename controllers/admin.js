@@ -118,12 +118,15 @@ class adminController{
 
     static async getEmployees(req, res, next){
         try{
-            // const { userType } = req.decodedToken;
-            // if(userType.includes('user') || userType.includes('staff')){
-            //     throw ({name: "UNAUTHROIZED"})
-            // }
+            const { userType } = req.decodedToken;
+            if(userType.includes('user') || userType.includes('staff')){
+                throw ({name: "UNAUTHROIZED"})
+            }
 
-            const staffs = await staff.findAll();
+            const staffs = await staff.findAll({
+                include: [staffProfile]
+            });
+
             res.status(200).json({
                 data: staffs,
                 msg: 'Staff list retrieved successfully'
