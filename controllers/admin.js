@@ -80,6 +80,7 @@ class adminController{
             });
 
             const createdStaffProfile = await staffProfile.create({
+                id: createdStaff.id,
                 staffID: createdStaff.id,
                 profileDescription: profileDescription,
                 pictureUrl: pictureUrl
