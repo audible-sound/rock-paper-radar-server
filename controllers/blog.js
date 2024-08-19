@@ -13,6 +13,19 @@ class blogController{
         }
     }
 
+    static async getMyBlogs(req, res, next){
+        const { id } = req.decodedToken
+        try{
+            const blogs = await blog.findAll({ where: {staffID: id}});
+            res.status(200).json({
+                data: blogs,
+                msg: 'Blogs retrieved successfully'
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+
     static async getBlogsById(req, res, next){
         try{
             const blogs = await blog.findAll({where: {id: req.params.id}});

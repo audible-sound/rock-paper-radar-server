@@ -43,12 +43,18 @@ class userGuideController{
                 content
             } = req.body;
 
+            const transaction = await sequelize.transaction();
+
             const newUserGuide = await userGuide.create({
                 staffID: id,
                 forUserType,
                 pictureUrl,
                 content
+            },{
+                transaction
             });
+
+            transaction.commit();
 
             res.status(201).json({
                 data: newUserGuide,

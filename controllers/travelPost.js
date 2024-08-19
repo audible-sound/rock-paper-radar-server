@@ -5,6 +5,7 @@ const op = Sequelize.Op;
 class TravelPostController {
     static async getPosts(req, res, next) {
         try {
+
             const posts = await Post.findAll({
                 include: [
                     {
@@ -21,6 +22,7 @@ class TravelPostController {
                     }
                 ]
             });
+          
             res.status(200).json({
                 data: posts,
                 msg: 'Posts retrived successfully'
@@ -73,6 +75,7 @@ class TravelPostController {
                     }
                 ]
             });
+          
             if (!post) {
                 throw new Error('Post not found');
             }
@@ -108,6 +111,7 @@ class TravelPostController {
                 throw new Error('USER_NOT_FOUND');
             }
             const userId = actualUser.id;
+
             const createdPost = await Post.create({
                 userId,
                 postLikes: 0,
@@ -123,6 +127,7 @@ class TravelPostController {
                 }, { transaction });
             }
             await transaction.commit();
+
             res.status(201).json({
                 msg: 'Post created successfully'
             });
@@ -142,6 +147,7 @@ class TravelPostController {
             }
             const userId = actualUser.id;
             const likeExists = await UserLike.findOne({
+
                 where: {
                     userId,
                     postId: id

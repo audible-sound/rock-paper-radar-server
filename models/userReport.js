@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Report extends Model {
+  class userReport extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Report.belongsTo(models.User, {
+      userReport.belongsTo(models.User, {
         foreignKey: 'userID'
       })
     }
   }
-  Report.init({
+  userReport.init({
     userID: {
       type: 'DataTypes.STRING',
       allowNull: false,
@@ -26,32 +26,6 @@ module.exports = (sequelize, DataTypes) => {
           args: true},
         notEmpty: {
           msg: 'User ID cannot be empty',
-          args: true
-        }
-      }
-    },
-    reportType: {
-      type: 'DataTypes.STRING',
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Report Type cannot be null',
-          args: true},
-        notEmpty: {
-          msg: 'Report Type cannot be empty',
-          args: true
-        }
-      }
-    },
-    reportedID: {
-      type: 'DataTypes.INTEGER',
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'ReportedID cannot be null',
-          args: true},
-        notEmpty: {
-          msg: 'ReportedID cannot be empty',
           args: true
         }
       }
@@ -84,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Report',
+    modelName: 'userReport',
   });
-  return Report;
+  return userReport;
 };
