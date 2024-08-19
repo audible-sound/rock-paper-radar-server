@@ -5,7 +5,22 @@ const op = Sequelize.Op;
 class TravelPostController {
     static async getPosts(req, res, next) {
         try {
-            const posts = await Post.findAll();
+            const posts = await Post.findAll({
+                include: [
+                    {
+                        model: User,
+                        attributes: ['username'],
+                        include: [{
+                            model: UserProfile,
+                            attributes: ['profilePictureUrl']
+                        }]
+                    },
+                    {
+                        model: PostTag,
+                        attributes: ['name']
+                    }
+                ]
+            });
             res.status(200).json({
                 data: posts,
                 msg: 'Posts retrived successfully'
@@ -231,7 +246,47 @@ class TravelPostController {
             next(error);
         }
     }
+    static async editPost(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { id } = req.params;
+            const { username } = req.decodedToken;
+            const {
+                pictureUrl,
+                postTitle,
+                postLocation,
+                categories,
+                postDescription
+              
+            const post = await Post.findOne({ where: { id, userId: actualUser.id } });
+            if (!post) {
+                throw new Error('POST_NOT_FOUND');
+            }
 
+            await PostTag.destroy({ where: { postId: post.id }, transaction });
+            await post.update({
+                pictureUrl,
+                postTitle,
+                postContent: postDescription,
+                location: postLocation
+            }, { transaction });
+
+
+            for (let i = 0; i < categories.length; i++) {
+                await PostTag.create({
+                    postId: id,
+                    name: categories[i]
+                }, { transaction });
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                message: 'Post updated successfully'
+            });
+        } catch (error) {
+            await transaction.rollback();}
+          
     static async createReportPost(req, res, next) {
         const transaction = await sequelize.transaction();
         try {
@@ -245,7 +300,6 @@ class TravelPostController {
             if (!actualUser) {
                 throw new Error('USER_NOT_FOUND');
             }
-
             const userId = actualUser.id;
             const createdReportPost = await ReportPost.create({
                 userId,

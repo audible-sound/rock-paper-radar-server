@@ -30,6 +30,15 @@ function ErrorHandler (err, req, res, next) {
     } else if (err.name === 'USER_NOT_FOUND') {
         statusCode = 404;
         message = 'User not found';
+    } else if (err.name === 'POST_NOT_FOUND') {
+        statusCode = 404;
+        message = 'Post not found';
+    } else if (err.name === 'COMMENT_NOT_FOUND') {
+        statusCode = 404;
+        message = 'Comment not found';
+    } else if (err.name === 'TRAVEL_PLAN_NOT_FOUND') {
+        statusCode = 404;
+        message = 'Travel plan not found';
     }
 
     res.status(statusCode).json({message: message});

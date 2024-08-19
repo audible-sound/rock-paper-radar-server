@@ -2,37 +2,27 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('TravelPlans', {
+    await queryInterface.createTable('MarkerData', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      lat: {
+        type: Sequelize.FLOAT,
+        allowNull: false
+      },
+      lng: {
+        type: Sequelize.FLOAT,
+        allowNull: false
+      },
+      type: {
+        type: Sequelize.TEXT,
+        allowNull: false
+      },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-      },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      duration: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      location: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      pictureUrl: {
-        type: Sequelize.STRING,
         allowNull: false
       },
       createdAt: {
@@ -46,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('TravelPlans');
+    await queryInterface.dropTable('MarkerData');
   }
 };
