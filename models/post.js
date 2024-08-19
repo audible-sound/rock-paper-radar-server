@@ -34,11 +34,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'
       });
-      Post.hasOne(models.BannedPost, {
-        foreignKey: 'postId', 
-        onDelete: 'CASCADE', 
-        onUpdate: 'CASCADE'
-      });
     }
   }
   Post.init({

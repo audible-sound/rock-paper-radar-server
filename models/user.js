@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'
       });
-      User.hasMany(models.BannedPost, {
+      User.hasMany(models.ReportComment, {
         foreignKey: 'userId', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE'

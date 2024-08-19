@@ -1,13 +1,14 @@
-const {staff, staffProfile, sequelize, ReportPost,BannedPost} = require("../models/index.js");
+const {User, staff, staffProfile, sequelize, ReportPost, BannedPost, ReportComment, BannedComment} = require("../models/index.js");
 const {hashPassword, comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
+const {where, Op} = require("sequelize");
 
 class staffController{
     static async getPersonalProfile(req, res, next) {
         try {
             const { username } = req.decodedToken;
             const actualStaff = await staff.findOne({
-                where: { username },
+                where: { username },            
                 include: [staffProfile]
             })
             res.status(200).json({
@@ -176,10 +177,10 @@ class staffController{
                 throw ({name: "UNAUTHORIZED"});
             }
             
-            const UserReports = await ReportPost.findAll();
+            const ReportPost = await ReportPost.findAll();
 
             res.status(200).json({
-                data: UserReports,
+                data: ReportPost,
                 msg: 'User Report retrieved successfully'
             })
         }catch(error){
@@ -206,7 +207,7 @@ class staffController{
 
             const createdBannedPost = await BannedPost.create({
                 reportId,
-            }, { transaction });
+            }, { transaction});
             await transaction.commit();
 
             const data = {
@@ -220,6 +221,106 @@ class staffController{
             });
         } catch (error) {
             next(error);
+        }
+    }
+
+    static async getBannedPost(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            const { username } = req.decodedToken;
+            const actualUser = await staff.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+            
+            const createdBannedPost = await BannedPost.findAll();
+
+            res.status(200).json({
+                data: createdBannedPost,
+                msg: 'Banned Post retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }
+
+    static async getReportComment(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            
+            const getReportComment = await ReportComment.findAll();
+
+            res.status(200).json({
+                data: getReportComment,
+                msg: 'User Report retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }
+
+    static async createBannedComment(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            const { username } = req.decodedToken;
+            const actualUser = await staff.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
+            const {
+                reportId,
+            } = req.body;
+
+            const createdBannedComment = await BannedComment.create({
+                reportId,
+            }, { transaction});
+            await transaction.commit();
+
+            const data = {
+                id: createdBannedComment.id,
+                date: createdBannedComment.createdAt                
+            }
+
+            res.status(201).json({
+                msg: 'Banned comment created successfully',
+                data
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getBannedComment(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType != 'staff'){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            const { username } = req.decodedToken;
+            const actualUser = await staff.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+            
+            const createdBannedComment = await BannedComment.findAll();
+
+            res.status(200).json({
+                data: createdBannedComment,
+                msg: 'Banned Comment retrieved successfully'
+            })
+        }catch(error){
+            next(error)
         }
     }
 };

@@ -15,5 +15,6 @@ router.put('/like/:id', authHandler, TravelPostController.likePost);
 router.delete('/:id', authHandler, TravelPostController.deletePost);
 
 router.post('/reportPost',authHandler,TravelPostController.createReportPost);
+router.post('/reportComment',authHandler,TravelPostController.createReportComment);
 
 module.exports = router;

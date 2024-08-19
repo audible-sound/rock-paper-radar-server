@@ -7,6 +7,7 @@ const blogRouter = require('./blog.js');
 const userGuideRouter = require('./userGuide.js');
 const feedbackRouter = require('./feedback.js');
 const bugReportRouter = require('./bugReport.js');
+const dashboardRouter = require('./dashboard.js');
 
 router.use('/user', userRouter);
 router.use('/staff', staffRouter);
@@ -15,5 +16,6 @@ router.use('/staff', staffRouter);
 router.use('/travelPost', travelPostRouter);
 router.use('/feedback', feedbackRouter);
 router.use('/bugreport', bugReportRouter);
+router.use('/dashboard', dashboardRouter);
 
 module.exports = router;
