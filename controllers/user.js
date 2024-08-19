@@ -62,7 +62,7 @@ class UserController {
             const { username, password } = req.body;
             const actualUser = await User.findOne({
                 where: { username },
-                include: [UserProfile, Bans]
+                include: [UserProfile, Ban]
             });
             if (!actualUser) {
                 throw ({ name: "INVALID_USERNAME" });

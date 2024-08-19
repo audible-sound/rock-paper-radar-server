@@ -1,6 +1,8 @@
 const { verifyToken } = require("../helpers/accessToken");
 
 function authHandler(req, res, next) {
+  console.log(req.headers.authorization);
+  
     if (!req.headers.authorization) {
       throw ({ name: "NO_CREDENTIALS" });
     }
