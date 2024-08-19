@@ -1,4 +1,4 @@
-const { Post, User, UserLike, PostTag, UserProfile, Comment, sequelize } = require('../models/index.js');
+const { Post, User, UserLike, PostTag, UserProfile, Comment, ReportPost, ReportComment, sequelize } = require('../models/index.js');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 
@@ -26,7 +26,7 @@ class TravelPostController {
                 msg: 'Posts retrived successfully'
             });
         } catch (error) {
-            next(error);
+            next(error);                                                                                                                                                
         }
     }
 
@@ -246,7 +246,6 @@ class TravelPostController {
             next(error);
         }
     }
-
     static async editPost(req, res, next) {
         const transaction = await sequelize.transaction();
         try {
@@ -258,13 +257,7 @@ class TravelPostController {
                 postLocation,
                 categories,
                 postDescription
-            } = req.body;
-
-            const actualUser = await User.findOne({ where: { username } });
-            if (!actualUser) {
-                throw new Error('USER_NOT_FOUND');
-            }
-
+              
             const post = await Post.findOne({ where: { id, userId: actualUser.id } });
             if (!post) {
                 throw new Error('POST_NOT_FOUND');
@@ -292,7 +285,77 @@ class TravelPostController {
                 message: 'Post updated successfully'
             });
         } catch (error) {
-            await transaction.rollback();
+            await transaction.rollback();}
+          
+    static async createReportPost(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { username } = req.decodedToken;
+            const {
+                postId,
+                reportContent,
+            } = req.body;
+
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+            const userId = actualUser.id;
+            const createdReportPost = await ReportPost.create({
+                userId,
+                postId,
+                reportState: 'unverified',
+                reportContent,
+            }, { transaction });
+            await transaction.commit();
+
+            const data = {
+                id: createdReportPost.id,
+                date: createdReportPost.createdAt                
+            }
+
+            res.status(201).json({
+                msg: 'Report post created successfully',
+                data
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async createReportComment(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { username } = req.decodedToken;
+            const {
+                commentId,
+                reportContent,
+            } = req.body;
+
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
+            const userId = actualUser.id;
+            const createdReportComment = await ReportComment.create({
+                userId,
+                commentId,
+                reportState: 'unverified',
+                reportContent,
+            }, { transaction });
+            await transaction.commit();
+
+            const data = {
+                id: createdReportComment.id,
+                date: createdReportComment.createdAt                
+            }
+
+            res.status(201).json({
+                msg: 'Report comment created successfully',
+                data
+            });
+        } catch (error) {
             next(error);
         }
     }
