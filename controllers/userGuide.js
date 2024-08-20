@@ -43,12 +43,18 @@ class userGuideController{
                 content
             } = req.body;
 
+            const transaction = await sequelize.transaction();
+
             const newUserGuide = await userGuide.create({
                 staffID: id,
                 forUserType,
                 pictureUrl,
                 content
+            },{
+                transaction
             });
+
+            transaction.commit();
 
             res.status(201).json({
                 data: newUserGuide,
@@ -64,7 +70,7 @@ class userGuideController{
         try{
             const { id, userType } = req.decodedToken;
             const blogToBeDeleted = blog.findAll({where: {id: req.params.id}});
-            if(blogToBeDeleted.staffID != id || userType.includes('user')){
+            if(blogToBeDeleted.staffID !== id || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
 
@@ -87,7 +93,7 @@ class userGuideController{
             const {id, userType} = req.decodedToken;
             const userGuideToBeEdited = await userGuide.findAll({plain: true, where: {id: req.params.id}});
             
-            if(userType.includes('user') || userType.includes('staff') || userGuideToBeEdited.staffID != id){
+            if(!userType.includes('admin') || userGuideToBeEdited.staffID !== id){ 
                 throw ({ name: "UNAUTHORIZED"});
             }
             

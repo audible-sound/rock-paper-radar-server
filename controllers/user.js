@@ -1,4 +1,4 @@
-const { User, UserProfile, sequelize, Ban, Post } = require('../models/index.js');
+const { User, UserProfile, sequelize, userBan, Post } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -62,7 +62,7 @@ class UserController {
             const { username, password } = req.body;
             const actualUser = await User.findOne({
                 where: { username },
-                include: [UserProfile, Bans]
+                include: [UserProfile]
             });
             if (!actualUser) {
                 throw ({ name: "INVALID_USERNAME" });
@@ -71,7 +71,14 @@ class UserController {
             if (!isMatch) {
                 throw ({ name: "INVALID_PASSWORD" });
             }
-            if(actualUser.Ban.timestampUnbanned > new Date()){
+
+            const userBans = await userBan.findAll({
+                limit: 1,
+                attributes: [sequelize.fn('MAX', sequelize.col('createdAt'))],
+                where: {userID: actualUser.id}
+            });
+
+            if(userBans.timestampUnbanned > new Date()){
                 throw ({ name: "USER_BANNED" });
             }
             const data = {
@@ -92,6 +99,7 @@ class UserController {
                 accessToken
             });
         } catch (error) {
+            console.log(error);
             next(error);
         }
     }
@@ -138,11 +146,6 @@ class UserController {
             }, {
                 transaction
             });
-
-            // const createdBan = await Ban.create({
-            //     userID: createdUser.id,
-            //     timestampUnbanned: new Date('January 1, 1970 00:00:00')
-            // });
 
             await transaction.commit();
 

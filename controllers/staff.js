@@ -1,6 +1,7 @@
-const {staff, staffProfile, sequelize} = require("../models/index.js");
-const {hashPassword, comparePassword} = require("../helpers/encryption.js");
+const {staff, staffProfile, sequelize, blog} = require("../models/index.js");
+const {comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
+const staffprofile = require("../models/staffprofile.js");
 
 class staffController{
     static async getPersonalProfile(req, res, next) {
@@ -23,23 +24,70 @@ class staffController{
         }
     }
 
+    static async getProfile(req, res, next) {
+        try {
+            const givenUsername = req.query.username;
+            const actualStaff = await staff.findOne({
+                where: { username: givenUsername },
+                include: [staffProfile]
+            })
+            const blogsCount = await blog.count({where: {id: actualStaff.id}})
+            res.status(200).json({
+                message: 'Data retrieved successfully',
+                data: {
+                    username: actualStaff.username,
+                    profilePictureUrl: actualStaff.staffProfile.pictureUrl,
+                    totalBlogs: blogsCount,
+                    joinedDate: actualStaff.createdAt,
+                    createdAt: actualStaff.createdAt,
+                    birthDate: actualStaff.birthDate,
+                    gender: actualStaff.gender,
+                    email: actualStaff.email,
+                    country: actualStaff.country,
+                    phoneNumber: actualStaff.phoneNumber,
+                    description: actualStaff.staffProfile.profileDescription
+                }
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
     static async editstaffProfile(req, res, next){
+        const transaction = await sequelize.transaction();
         try{
             const {id, userType} = req.decodedToken;
-            const staffProfileToBeEdited = await staffProfile.findAll({plain: true, where: {staffID: id}});
-            
+            const staffProfileToBeEdited = await staff.findAll({plain: true, where: {id}});
+            const blogsCount = await blog.count({ where: {staffID: id}});
             if(!staffProfileToBeEdited || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
             
             const {
+                email,
+                birthDate,
+                gender,
+                country,
+                phoneNumber,
                 profileDescription,
-                pictureUrl
+                profilePictureUrl
             } = req.body;
-            const transaction = await sequelize.transaction();
+
+            await staff.update({
+                email,
+                birthDate,
+                gender,
+                country,
+                phoneNumber,
+            }, {
+                where: {id}
+            }, {
+                transaction
+            });
+
             await staffProfile.update({
                 profileDescription,
-                pictureUrl
+                pictureUrl: profilePictureUrl
             }, {
                 where: {staffID: id}
             }, {
@@ -47,8 +95,16 @@ class staffController{
             });
             await transaction.commit();
 
+            const data = {
+                username: staff.id,
+                profilePictureUrl: staffProfile.pictureUrl,
+                joinedDate: staff.createdAt,
+                totalBlogs: blogsCount
+            }
+
             res.status(200).json({
-                msg: 'Staff profile edited successfully'
+                msg: 'Staff profile edited successfully',
+                data
             });
         }catch(error){
             if (error.name.includes('Sequelize')) {
@@ -93,78 +149,6 @@ class staffController{
                 accessToken
             });
         }catch(error){
-            next(error);
-        }
-    }
-
-    static async registerStaff(req, res, next){
-        const transaction = await sequelize.transaction();
-        try{
-            const{
-                username,
-                password,
-                confirmPassword,
-                userType,
-                email,
-                birthDate,
-                gender,
-                country,
-                phoneNumber,
-                profileDescription,
-                pictureUrl
-            } = req.body;
-
-            if(password != confirmPassword){
-                throw({name: "PASSWORDS_DO_NOT_MATCH"});
-            }
-
-            const hashedPassword = await hashPassword(password);
-
-            const createdStaff = await staff.create({
-                username,
-                password: hashedPassword,
-                userType,
-                email,
-                birthDate,
-                gender,
-                country,
-                phoneNumber
-            }, {
-                transaction
-            });
-
-            const createdStaffProfile = await staffProfile.create({
-                staffID: createdStaff.id,
-                profileDescription: profileDescription,
-                pictureUrl: pictureUrl
-            }, {
-                transaction
-            });
-
-            await transaction.commit();
-
-            const data = {
-                username: createdStaff.username,
-                pictureUrl: createdStaffProfile.profilePicture
-            }
-
-            const payload = {
-                username: createdStaff.username,
-                id: createdStaff.id,
-                userType: createdStaff.userType,
-                date: new Date()
-            }
-            const accessToken = createToken(payload);
-
-            res.status(201).json({
-                message: 'Staff registered successfully',
-                data,
-                accessToken
-            })
-        }catch(error){
-            if(error.name.includes('Sequelize')){
-                await transaction.rollback();
-            }
             next(error);
         }
     }

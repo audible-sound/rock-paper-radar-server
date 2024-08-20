@@ -13,6 +13,19 @@ class blogController{
         }
     }
 
+    static async getMyBlogs(req, res, next){
+        const { id } = req.decodedToken
+        try{
+            const blogs = await blog.findAll({ where: {staffID: id}});
+            res.status(200).json({
+                data: blogs,
+                msg: 'Blogs retrieved successfully'
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+
     static async getBlogsById(req, res, next){
         try{
             const blogs = await blog.findAll({where: {id: req.params.id}});
@@ -87,7 +100,7 @@ class blogController{
             const {id, userType} = req.decodedToken;
             const blogToBeDeleted = await blog.findAll({plain: true, where: {id: req.params.id}});
             
-            if(blogToBeDeleted.staffID != id || userType.includes('user')){
+            if(blogToBeDeleted.staffID !== id || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
             
@@ -111,7 +124,7 @@ class blogController{
             const {id, userType} = req.decodedToken;
             const blogToBeEdited = await blog.findAll({plain: true, where: {id: req.params.id}});
             
-            if(blogToBeEdited.staffID != id || userType.includes('user')){
+            if(blogToBeEdited.staffID !== id || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
             

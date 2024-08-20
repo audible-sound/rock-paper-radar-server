@@ -1,9 +1,8 @@
 const router = require('express').Router();
-const blogController = require('../controllers/blog.js');
+const reportController = require('../controllers/reports.js');
 const authHandler = require('../middlewares/authorization.js');
 
 router.get('/', blogController.getBlogs);
-router.get('/myBlogs', authHandler, blogController.getMyBlogs);
 router.get('/:id', blogController.getBlogsById);
 router.post('/', authHandler, blogController.createBlog);
 router.delete('/:id', authHandler, blogController.deleteBlog);

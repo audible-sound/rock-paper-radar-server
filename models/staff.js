@@ -51,6 +51,20 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    fullName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Full name cannot be null',
+          args: true
+        },
+        notEmpty: {
+          msg: 'Full name cannot be empty',
+          args: true
+        }
+      }
+    },
     //TODO validate length
     password: {
       type: DataTypes.STRING,

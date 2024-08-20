@@ -42,7 +42,7 @@ class bugReportController{
     static async getBugReports(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'admin'){
+            if(!userType.includes('admin')){
                 throw ({name: "UNAUTHORIZED"});
             }
             const BugReports = await BugReport.findAll();
@@ -58,7 +58,7 @@ class bugReportController{
     static async getBugReportById(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'admin'){
+            if(!userType.includes('admin')){
                 throw ({name: "UNAUTHORIZED"});
             }
             const BugReports = await BugReport.findAll({where: {id: req.params.id}});
