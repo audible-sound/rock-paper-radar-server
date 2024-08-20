@@ -100,7 +100,7 @@ class blogController{
             const {id, userType} = req.decodedToken;
             const blogToBeDeleted = await blog.findAll({plain: true, where: {id: req.params.id}});
             
-            if(blogToBeDeleted.staffID != id || userType.includes('user')){
+            if(blogToBeDeleted.staffID !== id || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
             
@@ -124,7 +124,7 @@ class blogController{
             const {id, userType} = req.decodedToken;
             const blogToBeEdited = await blog.findAll({plain: true, where: {id: req.params.id}});
             
-            if(blogToBeEdited.staffID != id || userType.includes('user')){
+            if(blogToBeEdited.staffID !== id || userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
             

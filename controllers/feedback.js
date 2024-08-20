@@ -41,7 +41,7 @@ class feedbackController{
     static async getFeedbacks(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'admin'){
+            if(userType !== 'admin'){
                 throw ({name: "UNAUTHORIZED"});
             }
             const feedbacks = await feedback.findAll();
@@ -57,7 +57,7 @@ class feedbackController{
     static async getFeedbackById(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'admin'){
+            if(userType !== 'admin'){
                 throw ({name: "UNAUTHORIZED"});
             }
             const feedbacks = await feedback.findAll({where: {id: req.params.id}});
