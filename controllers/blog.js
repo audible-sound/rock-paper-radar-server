@@ -1,11 +1,12 @@
-const {blog, sequelize} = require("../models/index.js");
+const {blog, staff, sequelize} = require("../models/index.js");
 
 class blogController{
     static async getBlogs(req, res, next){
         try{
-            const blogs = await blog.findAll();
+            const blogs = await blog.findAll({include: [{model: staff, attributes: ['username']}]});
+            console.log(blogs);
             res.status(200).json({
-                data: blogs,
+                blogs,
                 msg: 'Blogs retrieved successfully'
             });
         }catch(error){
@@ -16,7 +17,7 @@ class blogController{
     static async getMyBlogs(req, res, next){
         const { id } = req.decodedToken
         try{
-            const blogs = await blog.findAll({ where: {staffID: id}});
+            const blogs = await blog.findAll({ where: {staffID: id}, include: [{model: staff, attributes: ['username']}]});
             res.status(200).json({
                 data: blogs,
                 msg: 'Blogs retrieved successfully'
@@ -28,13 +29,20 @@ class blogController{
 
     static async getBlogsById(req, res, next){
         try{
-            const blogs = await blog.findAll({where: {id: req.params.id}});
-            if(blogs == ""){
+            const blogId = parseInt(req.params.blogId);
+            const blogs = await blog.findAll({plain: true, where: {id: blogId}});
+            if(!blogs){
                 throw new Error('Blog not found');
             }
+            const data = {
+                blogTitle: blogs.blogTitle,
+                blogContent: blogs.blogContent,
+                blogPicture: blogs.blogPicture,
+                createdAt: blogs.createdAt
+            }
             res.status(200).json({
-                data: blogs,
-                msg: 'Post retrieved successfully'
+                data,
+                msg: 'Blog retrieved successfully'
             });
         }catch(error){
             next(error);

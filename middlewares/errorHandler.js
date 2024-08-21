@@ -26,7 +26,7 @@ function ErrorHandler (err, req, res, next) {
         message = 'No credentials provided';
     } else if (err.name === 'UNAUTHORIZED') {
         statusCode = 403;
-        message = 'User is not authorized to perform this action';
+        message = 'You are not authorized to perform this action';
     } else if (err.name === 'USER_BANNED') {
         statusCode = 403;
         message = 'User is currently banned';

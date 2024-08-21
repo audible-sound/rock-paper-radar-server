@@ -109,7 +109,7 @@ class adminController{
                 accessToken
             })
         }catch(error){
-            if(error.name.includes('Sequelize')){
+            if(error.name.includes('Sequelize')){  //TODO - FIGURE OUT WHY TRANSACTION IS NOT WORKING
                 await transaction.rollback();
             }
             next(error);

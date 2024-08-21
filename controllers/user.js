@@ -1,4 +1,4 @@
-const { User, UserProfile, sequelize, userBan, Post } = require('../models/index.js');
+const { User, UserProfile, sequelize, userBans, Post } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -72,13 +72,12 @@ class UserController {
                 throw ({ name: "INVALID_PASSWORD" });
             }
 
-            const userBans = await userBan.findAll({
-                limit: 1,
+            const userBan = await userBans.findOne({
                 attributes: [sequelize.fn('MAX', sequelize.col('createdAt'))],
                 where: {userID: actualUser.id}
             });
 
-            if(userBans.timestampUnbanned > new Date()){
+            if(userBan.timestampUnbanned > new Date()){
                 throw ({ name: "USER_BANNED" });
             }
             const data = {
@@ -86,8 +85,8 @@ class UserController {
                 profilePictureUrl: actualUser.UserProfile.profilePictureUrl
             }
             const payload = {
-                username: createdUser.username,
-                id: createdUser.id,
+                username: actualUser.username,
+                id: actualUser.id,
                 userType: 'user',
                 date: new Date()
             };
