@@ -21,6 +21,7 @@ router.use('/bugreport', bugReportRouter);
 
 router.use('/admin', adminRouter);
 router.use('/blog', blogRouter);
+router.use('/userguide', userGuideRouter);
 router.use('/staff', staffRouter);
 
 module.exports = router;
