@@ -47,25 +47,34 @@ module.exports = (sequelize, DataTypes) => {
           args: true
         },
         isIn: {
-          args: [['user', 'staff']],
+          args: [['Normal User', 'Employee']],
           msg: 'User type must be either user or staff'
         }
       }
     },
-    pictureUrl: {
+    section: {
       type: 'DataTypes.STRING',
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Picture URL cannot be null',
+          msg: 'Section cannot be null',
           args: true},
         notEmpty: {
-          msg: 'Picture URL cannot be empty',
+          msg: 'Section cannot be empty',
           args: true
-        },
-        isUrl: {
-          msg: 'Picture Url must be a valid URL',
-          args: true,
+        }
+      }
+    },
+    title: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'User guide title cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'User guide title cannot be empty',
+          args: true
         }
       }
     },

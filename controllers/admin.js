@@ -135,7 +135,6 @@ class adminController{
             next(error);
         }
     }
-
 };
 
 module.exports = adminController;

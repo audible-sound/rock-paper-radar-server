@@ -53,6 +53,62 @@ class staffController{
         }
     }
 
+    static async deleteStaff(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            const staffID = req.params.id;
+
+            if(!userType.includes('admin')){
+                throw {name: "UNAUTHORIZED"}
+            }
+
+            await staff.destroy({where: {id: staffID}}, {transaction});
+            transaction.commit();
+
+            res.status(200).json({
+                message: 'Staff deleted successfully',
+            })
+        } catch (error) {
+            if (error.name.includes('Sequelize')) {
+                await transaction.rollback();
+            }
+            next(error);
+        }
+    }
+
+    static async updateStaffPriviledges(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            const staffID = req.params.id;
+            const updatedUserType = req.body.userType
+
+            if(!userType.includes('admin')){
+                throw {name: "UNAUTHORIZED"}
+            }
+
+            await staff.update({
+                userType: updatedUserType
+            }, {
+                where: {id: staffID}
+            }, {
+                transaction
+            });
+
+            transaction.commit();
+
+            res.status(200).json({
+                message: 'User type edited successfully',
+            })
+        } catch (error) {
+            if (error.name.includes('Sequelize')) {
+                await transaction.rollback();
+            }
+            next(error);
+        }
+    }
+
     static async editstaffProfile(req, res, next){
         const transaction = await sequelize.transaction();
         try{
