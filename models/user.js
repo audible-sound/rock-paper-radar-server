@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+const countriesList = require('../helpers/countriesList');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -17,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE' 
       });
 
-      User.hasOne(models.userBans, { 
+      User.hasOne(models.userBan, { 
         foreignKey: 'userID', 
         onDelete: 'CASCADE', 
         onUpdate: 'CASCADE' 
@@ -60,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           msg: 'Username cannot be empty',
           args: true,
+        },
+        len: {
+          args: [4, 10],
+          msg: 'Username must be between 4 and 10 characters long'
         }
       }
     },
@@ -159,6 +165,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           msg: 'Country cannot be empty',
           args: true,
+        },
+        isIn: {
+          args: [countriesList],
+          msg: 'Invalid country'
         }
       }
     },
@@ -170,17 +180,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
-        msg: 'phoneNumber is already in use',
+        msg: 'Phone number is already in use',
         args: true
       },
       validate: {
         notNull: {
-          msg: 'PhoneNumber cannot be null',
+          msg: 'Phone number cannot be null',
           args: true,
         },
         notEmpty: {
-          msg: 'PhoneNumber cannot be empty',
+          msg: 'Phone number cannot be empty',
           args: true,
+        },
+        is: {
+          args: /^\+\d{1,3}-\d+$/,
+          msg: 'Phone number must be in the format: +[country code]-[number]'
         }
       }
     }

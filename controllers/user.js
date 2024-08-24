@@ -67,30 +67,34 @@ class UserController {
             if (!actualUser) {
                 throw ({ name: "INVALID_USERNAME" });
             }
+
             const isMatch = await comparePassword(password, actualUser.password);
             if (!isMatch) {
                 throw ({ name: "INVALID_PASSWORD" });
             }
-
+            
             const userBans = await userBan.findAll({
                 limit: 1,
-                attributes: [sequelize.fn('MAX', sequelize.col('createdAt'))],
+                order: [['createdAt', 'DESC']],
                 where: {userID: actualUser.id}
             });
 
-            if(userBans.timestampUnbanned > new Date()){
+            if (userBans.length > 0 && userBans[0].timestampUnbanned > new Date()) {
                 throw ({ name: "USER_BANNED" });
             }
+
             const data = {
                 username: actualUser.username,
                 profilePictureUrl: actualUser.UserProfile.profilePictureUrl
             }
+
             const payload = {
-                username: createdUser.username,
-                id: createdUser.id,
+                username: actualUser.username,
+                id: actualUser.id,
                 userType: 'user',
                 date: new Date()
             };
+
             const accessToken = createToken(payload);
 
             res.status(200).json({
@@ -99,7 +103,6 @@ class UserController {
                 accessToken
             });
         } catch (error) {
-            console.log(error);
             next(error);
         }
     }

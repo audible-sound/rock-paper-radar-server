@@ -20,6 +20,7 @@ router.use('/feedback', feedbackRouter);
 router.use('/bugreport', bugReportRouter);
 
 router.use('/admin', adminRouter);
+router.use('/userGuide', userGuideRouter);
 router.use('/blog', blogRouter);
 router.use('/staff', staffRouter);
 
