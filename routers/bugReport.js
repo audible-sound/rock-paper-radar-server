@@ -5,5 +5,6 @@ const authHandler = require('../middlewares/authorization.js');
 router.get('/', authHandler, bugReportController.getBugReports);
 router.get('/:id', authHandler, bugReportController.getBugReportById);
 router.post('/', authHandler, bugReportController.createBugReport);
+router.put('/:id', authHandler, bugReportController.updateBugStateById);
 
 module.exports = router;

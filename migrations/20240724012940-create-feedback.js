@@ -9,23 +9,26 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
-        type: Sequelize.INTEGER,
+      userId: {
         allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      userType: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        primaryKey: true,
         validate: {
           isIn: [['user', 'staff', 'admin']]
         }
       },
-      userType: {
+      feedbackTitle: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      feedbackContent: {
+      feedbackDescription: {
         type: Sequelize.STRING,
         allowNull: false
-      },
-      pictureUrl: {
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

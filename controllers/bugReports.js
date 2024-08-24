@@ -1,20 +1,22 @@
-const {BugReport, sequelize} = require("../models/index.js");
+const {BugReport, User, staff, staffProfile, UserProfile, sequelize} = require("../models/index.js");
 
 class bugReportController{
     static async createBugReport(req, res, next){
         const transaction = await sequelize.transaction();
         try{
             const {
-                bugContent,
-                pictureUrl
+                title,
+                description,
+                stepsToReproduce
             } = req.body;
             const { id, userType } = req.decodedToken;
 
             const createdBugReport = await BugReport.create({
                 userID: id,
                 userType,
-                bugContent,
-                pictureUrl,
+                bugTitle: title,
+                bugDescription: description,
+                bugSteps: stepsToReproduce,
                 bugState: 'Unread'
             }, {
                 transaction
@@ -61,9 +63,38 @@ class bugReportController{
             if(!userType.includes('admin')){
                 throw ({name: "UNAUTHORIZED"});
             }
-            const BugReports = await BugReport.findAll({where: {id: req.params.id}});
+            var dataUser = "";
+            const BugReports = await BugReport.findAll({plain:true, where: {id: req.params.id}});
+            if(BugReports.userType.includes('user')){
+                dataUser = await User.findOne({where: {id: BugReports.userID}, include: [UserProfile]});
+            }else{
+                dataUser = await staff.findOne({where: {id: BugReports.userID}, include: [staffProfile]});
+            }
+            const datas = {
+                BugReports,
+                dataUser
+            }
             res.status(200).json({
-                data: BugReports,
+                data: datas,
+                msg: 'Bug Report retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }
+
+    static async updateBugStateById(req, res, next){
+        const transaction = await sequelize.transaction();
+        try{
+            const {bugState} = req.body
+            const {userType} = req.decodedToken;
+            if(!userType.includes('admin')){
+                throw ({name: "UNAUTHORIZED"});
+            }
+
+            await BugReport.update({bugState},{where: {id: req.params.id}},{transaction});
+
+            res.status(200).json({
                 msg: 'Bug Report retrieved successfully'
             })
         }catch(error){

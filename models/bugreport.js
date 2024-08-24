@@ -40,12 +40,25 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     }, 
-    bugContent: {
+    bugTitle: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Bug content cannot be null',
+          msg: 'Bug title cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'But title cannot be empty',
+          args: true
+        }
+      }
+    }, 
+    bugDescription: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Bug description cannot be null',
           args: true},
         notEmpty: {
           msg: 'But content cannot be empty',
@@ -53,15 +66,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     }, 
-    pictureUrl: {
+    bugSteps: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Picture URL cannot be null',
+          msg: 'Bug steps cannot be null',
           args: true},
         notEmpty: {
-          msg: 'Picture URL cannot be empty',
+          msg: 'Bug steps cannot be empty',
           args: true
         }
       }
