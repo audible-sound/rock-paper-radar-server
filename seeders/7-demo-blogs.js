@@ -14,38 +14,89 @@ module.exports = {
     */
 
     await queryInterface.bulkInsert('blogs', [{
-      staffID: 1,
-      blogPicture: 'https://i.natgeofe.com/k/e094f0a9-3cb3-40c3-afaf-314b6437ef14/ww-funny-animal-faces-goat_3x2.jpg',
-      blogTitle: 'Lorem Ipsum Dolor',
-      blogContent: 'TESTEESTE STSETSE TSETS ETSETS TETET ESTS TSET SETE ',
-      blogLikes: 0,
+      staffID: 51,
+      blogPicture: 'https://images.unsplash.com/photo-1724368202141-ef6f3522f50f?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Exploring the Hidden Gems of Europe',
+      blogContent: 'Discover stunning, lesser-known destinations in Europe. From quaint French villages to Norways fjords, these hidden gems offer authentic experiences away from tourist crowds.',
+      blogLikes: 45,
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
-      staffID: 1,
-      blogPicture: 'https://static.vecteezy.com/system/resources/thumbnails/029/554/988/small_2x/surprised-cat-scottish-isolated-on-white-background-generative-ai-photo.jpg',
-      blogTitle: 'Lorem Dolor',
-      blogContent: 'TElorem ipsum lorem ipsum loremS TSET SETE ',
-      blogLikes: 5,
+      staffID: 50,
+      blogPicture: 'https://images.unsplash.com/photo-1723821281511-bc0deb3851d7?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Adventures in the Amazon Rainforest',
+      blogContent: 'Journey through the Amazon, experiencing its rich biodiversity and cultures. Trek through untouched wilderness and discover hidden waterfalls in this unique world.',
+      blogLikes: 60,
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
-      staffID: 1,
-      blogPicture: 'https://plus.unsplash.com/premium_photo-1677545183884-421157b2da02?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZnVubnklMjBjYXR8ZW58MHx8MHx8fDA%3D',
-      blogTitle: 'My Blog',
-      blogContent: 'HEHEHE HEH EHH EEHEHE HEHE HHEH EHEHHE HEH',
-      blogLikes: 20,
+      staffID: 51,
+      blogPicture: 'https://plus.unsplash.com/premium_photo-1677002240252-af3f88114efc?q=80&w=3225&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'A Culinary Journey through Southeast Asia',
+      blogContent: 'Explore vibrant street food and culinary traditions in Southeast Asia. From Bangkok to Hanoi, discover the flavors and stories behind each dish on this enriching journey.',
+      blogLikes: 75,
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
-      staffID: 2,
-      blogPicture: 'https://plus.unsplash.com/premium_photo-1677545183884-421157b2da02?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZnVubnklMjBjYXR8ZW58MHx8MHx8fDA%3D',
-      blogTitle: 'My Blog TESTING TESTING',
-      blogContent: 'EH THIS IS A TEST TESTING THIS ONE LA THIS IS A BIG TEST, I AM TESTING',
-      blogLikes: 550,
+      staffID: 51,
+      blogPicture: 'https://images.unsplash.com/photo-1519998334409-c7c6b1147f65?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'The Magic of the Northern Lights',
+      blogContent: 'Chase the aurora borealis in the Arctic Circle. This guide helps you experience the Northern Lights, offering tips, prime locations, and insights into this natural wonder.',
+      blogLikes: 90,
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
+    },{
+      staffID: 50,
+      blogPicture: 'https://images.unsplash.com/photo-1724368202141-ef6f3522f50f?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Island Hopping in the Caribbean',
+      blogContent: 'A dream vacation in the Caribbean: explore beautiful islands, beaches, and rich local culture. From Bahamas beaches to Puerto Ricos rainforests, adventure awaits.',
+      blogLikes: 105,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }])
+
+    await queryInterface.bulkInsert('blogs', [{
+      staffID: 51,
+      blogPicture: 'https://images.unsplash.com/photo-1723821281511-bc0deb3851d7?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Exploring the Hidden Gems of Europe',
+      blogContent: 'Discover stunning, lesser-known destinations in Europe. From quaint French villages to Norways fjords, these hidden gems offer authentic experiences away from tourist crowds.',
+      blogLikes: 45,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },{
+      staffID: 50,
+      blogPicture: 'https://plus.unsplash.com/premium_photo-1677002240252-af3f88114efc?q=80&w=3225&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Adventures in the Amazon Rainforest',
+      blogContent: 'Journey through the Amazon, experiencing its rich biodiversity and cultures. Trek through untouched wilderness and discover hidden waterfalls in this unique world.',
+      blogLikes: 60,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },{
+      staffID: 51,
+      blogPicture: 'https://images.unsplash.com/photo-1519998334409-c7c6b1147f65?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'A Culinary Journey through Southeast Asia',
+      blogContent: 'Explore vibrant street food and culinary traditions in Southeast Asia. From Bangkok to Hanoi, discover the flavors and stories behind each dish on this enriching journey.',
+      blogLikes: 75,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },{
+      staffID: 51,
+      blogPicture: 'https://images.unsplash.com/photo-1724368202141-ef6f3522f50f?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'The Magic of the Northern Lights',
+      blogContent: 'Chase the aurora borealis in the Arctic Circle. This guide helps you experience the Northern Lights, offering tips, prime locations, and insights into this natural wonder.',
+      blogLikes: 90,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },{
+      staffID: 50,
+      blogPicture: 'https://images.unsplash.com/photo-1723821281511-bc0deb3851d7?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      blogTitle: 'Island Hopping in the Caribbean',
+      blogContent: 'A dream vacation in the Caribbean: explore beautiful islands, beaches, and rich local culture. From Bahamas beaches to Puerto Ricos rainforests, adventure awaits.',
+      blogLikes: 105,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }])
+
   },
 
   async down (queryInterface, Sequelize) {

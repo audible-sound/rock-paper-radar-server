@@ -9,66 +9,67 @@ module.exports = {
       forUserType: 'Normal User',
       section: 'Post Management',
       title: 'Create Post',
-      content: 'Steps to create a post...',
+      content: 'Learn how to create a new post, including selecting the right category, adding images, and publishing it to your feed for maximum engagement.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Post Management',
       title: 'Edit Post',
-      content: 'Steps to edit an existing post...',
+      content: 'Follow these steps to edit an existing post: change text, update images, adjust categories, and republish to keep your content up-to-date.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Post Management',
       title: 'Delete Post',
-      content: 'Steps to delete a post...',
+      content: 'Understand the process for deleting a post from your feed, ensuring unwanted content is removed and maintaining the integrity of your profile.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Comment Guidelines',
       title: 'Managing Comments',
-      content: 'Steps to manage comments effectively...',
+      content: 'Discover how to manage comments on your posts: approve, reply, or delete to maintain a positive and engaging discussion environment.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Comment Guidelines',
       title: 'Moderating Comments',
-      content: 'Guidelines for moderating comments...',
+      content: 'Guidelines on moderating comments effectively, including identifying and addressing inappropriate content while fostering healthy discussions.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Likes',
       title: 'Managing Likes',
-      content: 'How to manage likes effectively...',
+      content: 'Learn how to view and manage likes on your posts, understand engagement metrics, and encourage more interactions from your followers.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 1,
       forUserType: 'Normal User',
       section: 'Map Guidance',
       title: 'Icons',
-      content: 'How to click on icons...',
+      content: 'A guide to understanding and interacting with map icons, including how to click, navigate, and use them for effective map exploration.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     },{
       staffID: 2,
       forUserType: 'Normal User',
       section: 'Map Guidance',
       title: 'Moderating Comments',
-      content: 'Guidelines for moderating comments...',
+      content: 'Detailed instructions on moderating comments, ensuring your platform remains user-friendly and free from harmful or inappropriate content.',
       createdAt: new Date(),
-      updatedAt: new Date
+      updatedAt: new Date()
     }])
+
   },
 
   async down (queryInterface, Sequelize) {
