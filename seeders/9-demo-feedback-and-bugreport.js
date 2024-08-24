@@ -28,7 +28,7 @@ module.exports = {
       bugTitle: 'Bug report 2',
       bugDescription: 'Lorem Ipsum Dolor',
       bugSteps: 'TESTEESTE STSETSE TSETS ETSETS TETET ESTS TSET SETE ',
-      bugState: 'In progress',
+      bugState: 'In Progress',
       createdAt: new Date(),
       updatedAt: new Date()
     },{
