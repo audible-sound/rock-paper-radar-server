@@ -20,11 +20,15 @@ module.exports = {
           isIn: [['user', 'staff', 'admin']]
         }
       },
-      bugContent: {
+      bugTitle: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      pictureUrl: {
+      bugDescription: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      bugSteps: {
         allowNull: false,
         type: Sequelize.STRING
       },

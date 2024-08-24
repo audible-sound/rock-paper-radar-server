@@ -5,5 +5,6 @@ const authHandler = require('../middlewares/authorization.js');
 router.get('/', authHandler, feedbackController.getFeedbacks);
 router.get('/:id', authHandler, feedbackController.getFeedbackById);
 router.post('/', authHandler, feedbackController.createFeedback);
+router.post('/getUserData', authHandler, feedbackController.getUserDataByIdandUserType);
 
 module.exports = router;

@@ -14,15 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   feedback.init({
-    userID: {
+    userId: {
       type: 'DataTypes.INTEGER',
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'UserID cannot be null',
+          msg: 'UserId cannot be null',
           args: true},
         notEmpty: {
-          msg: 'UserID cannot be empty',
+          msg: 'UserId cannot be empty',
           args: true
         }
       }
@@ -40,7 +40,20 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    feedbackContent: {
+    feedbackTitle: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Feedback title cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Feedback title cannot be empty',
+          args: true
+        }
+      }
+    },
+    feedbackDescription: {
       type: 'DataTypes.STRING',
       allowNull: false,
       validate: {
@@ -51,20 +64,6 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Feedback content cannot be empty',
           args: true
         }
-      }
-    },
-    pictureUrl: {
-      type: 'DataTypes.STRING',
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Picture URL cannot be null',
-          args: true},
-        notEmpty: {
-          msg: 'Picture URL cannot be empty',
-          args: true
-        },
-        isUrl: true,
       }
     }
   }, {
