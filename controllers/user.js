@@ -1,4 +1,4 @@
-const { User, UserProfile, sequelize, userBan, Post } = require('../models/index.js');
+const { User, UserProfile, sequelize, UserBan, Post } = require('../models/index.js');
 const { hashPassword, comparePassword } = require("../helpers/encryption.js");
 const { createToken } = require("../helpers/accessToken.js");
 
@@ -61,9 +61,8 @@ class UserController {
         try {
             const { username, password } = req.body;
             const actualUser = await User.findOne({
-                where: { username },
+                where: { username},
                 include: [UserProfile]
-                include: [UserProfile, Ban]
             });
             if (!actualUser) {
                 throw ({ name: "INVALID_USERNAME" });
@@ -73,22 +72,22 @@ class UserController {
                 throw ({ name: "INVALID_PASSWORD" });
             }
 
-            const userBans = await userBan.findAll({
-                limit: 1,
-                attributes: [sequelize.fn('MAX', sequelize.col('createdAt'))],
-                where: {userID: actualUser.id}
-            });
+            // const userBans = await UserBan.findAll({
+            //     limit: 1,
+            //     attributes: [sequelize.fn('MAX', sequelize.col('createdAt'))],
+            //     where: {userID: actualUser.id}
+            // });
 
-            if(userBans.timestampUnbanned > new Date()){
-                throw ({ name: "USER_BANNED" });
-            }
+            // if(userBans.timestampUnbanned > new Date()){
+            //     throw ({ name: "USER_BANNED" });
+            // }
             const data = {
                 username: actualUser.username,
                 profilePictureUrl: actualUser.UserProfile.profilePictureUrl
             }
             const payload = {
-                username: createdUser.username,
-                id: createdUser.id,
+                username: actualUser.username,
+                id: actualUser.id,
                 userType: 'user',
                 date: new Date()
             };

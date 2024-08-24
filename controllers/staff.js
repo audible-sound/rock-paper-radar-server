@@ -1,6 +1,4 @@
-const {staff, staffProfile, sequelize, blog} = require("../models/index.js");
-const {comparePassword} = require("../helpers/encryption.js");
-const {User, staff, staffProfile, sequelize, ReportPost, BannedPost, ReportComment, BannedComment} = require("../models/index.js");
+const {User, staff, staffProfile, sequelize, ReportPost, BannedPost, ReportComment, BannedComment,blog} = require("../models/index.js");
 const {hashPassword, comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
 const staffprofile = require("../models/staffprofile.js");

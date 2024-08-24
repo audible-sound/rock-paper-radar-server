@@ -10,11 +10,11 @@ const userGuideRouter = require('./userGuide.js');
 const feedbackRouter = require('./feedback.js');
 const bugReportRouter = require('./bugReport.js');
 const adminRouter = require('./admin.js');
+const commentRouter = require('./comment.js');
 
 router.use('/user', userRouter);
 router.use('/comment', commentRouter);
 const dashboardRouter = require('./dashboard.js');
-
 router.use('/user', userRouter);
 router.use('/staff', staffRouter);
 // router.use('/blog', blogRouter);

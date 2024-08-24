@@ -263,7 +263,13 @@ class TravelPostController {
                 postLocation,
                 categories,
                 postDescription
-              
+            } = req.body;
+
+            const actualUser = await User.findOne({ where: { username } });
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
             const post = await Post.findOne({ where: { id, userId: actualUser.id } });
             if (!post) {
                 throw new Error('POST_NOT_FOUND');
@@ -291,7 +297,10 @@ class TravelPostController {
                 message: 'Post updated successfully'
             });
         } catch (error) {
-            await transaction.rollback();}
+            await transaction.rollback();
+            next(error);
+        }
+    }
           
     static async createReportPost(req, res, next) {
         const transaction = await sequelize.transaction();
