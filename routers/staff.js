@@ -7,4 +7,17 @@ router.get('/personalProfile', authHandler, staffController.getPersonalProfile);
 router.get('/profile', authHandler, staffController.getProfile);
 router.put('/profile', authHandler, staffController.editstaffProfile);
 
+router.get('/reportPost', authHandler, staffController.getReportPost)
+router.post('/bannedPost', authHandler, staffController.createBannedPost)
+router.get('/bannedPost', authHandler, staffController.getBannedPost)
+
+router.get('/reportComment', authHandler, staffController.getReportComment)
+router.post('/bannedComment', authHandler, staffController.createBannedComment)
+router.get('/bannedComment', authHandler, staffController.getBannedComment)
+
+router.get('/travelPost/:id', authHandler, staffController.getTravelPostById);
+
+router.put('/update/:id', authHandler, staffController.updateStaffAccount);
+router.delete('/:id', authHandler, staffController.deleteStaff);
+
 module.exports = router

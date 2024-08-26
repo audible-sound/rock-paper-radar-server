@@ -1,5 +1,4 @@
-const {userReport, userBans} = require("../models/index.js");
-const {Op} = require('sequelize');
+const {userReport, userBans, sequelize, User} = require("../models/index.js");
 
 class reportController{
     static async getUserReports(req, res, next){
@@ -39,12 +38,18 @@ class reportController{
         const transaction = await sequelize.transaction();
         try{
             const {
-                userID,
+                username,
                 reportContent
             } = req.body;
 
+            const actualUser = await User.findOne({where: {username}})
+
+            if (!actualUser) {
+                throw new Error('USER_NOT_FOUND');
+            }
+
             const newUserReport = await userReport.create({
-                userID,
+                userID: actualUser.id,
                 reportState: 'unverified',
                 reportContent
             }, {

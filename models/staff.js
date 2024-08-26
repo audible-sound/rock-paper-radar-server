@@ -29,6 +29,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUPDATE: 'CASCADE'
       })
+
+      staff.hasMany(models.FeedbackReply, {
+        foreignKey: 'adminId',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      });
     }
   }
   staff.init({

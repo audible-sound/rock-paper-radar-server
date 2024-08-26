@@ -10,6 +10,8 @@ const userGuideRouter = require('./userGuide.js');
 const feedbackRouter = require('./feedback.js');
 const bugReportRouter = require('./bugReport.js');
 const adminRouter = require('./admin.js');
+const dashboardRouter = require('./dashboard.js');
+const reportRouter = require('./report.js');
 
 router.use('/user', userRouter);
 router.use('/comment', commentRouter);
@@ -17,8 +19,9 @@ router.use('/travelPost', travelPostRouter);
 router.use('/markerData', markerDataRouter);
 router.use('/travelPlan', travelPlanRouter);
 router.use('/feedback', feedbackRouter);
+router.use('/dashboard', dashboardRouter);
 router.use('/bugreport', bugReportRouter);
-
+router.use('/report', reportRouter);
 router.use('/admin', adminRouter);
 router.use('/userGuide', userGuideRouter);
 router.use('/blog', blogRouter);

@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      feedback.hasMany(models.FeedbackReply, {
+        foreignKey: 'feedbackId'
+      });
     }
   }
   feedback.init({
@@ -65,6 +68,21 @@ module.exports = (sequelize, DataTypes) => {
           args: true
         },
         isUrl: true,
+      }
+    },
+    status: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      defaultValue: 'unread',
+      validate: {
+        notNull: {
+          msg: 'Status cannot be null',
+          args: true
+        },
+        isIn: {
+          args: [['read', 'unread']],
+          msg: 'Status must be either "read" or "unread"'
+        }
       }
     }
   }, {

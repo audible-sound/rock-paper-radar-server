@@ -1,11 +1,9 @@
-const {userGuide} = require("../models/index.js");
-const {Op} = require('sequelize');
+const {userGuide, Sequelize, sequelize} = require("../models/index.js");
 
 class userGuideController{
     static async getUserGuides(req, res, next){
         try{
-            const { userType } = req.decodedToken;
-            const userGuides = await userGuide.findAll({where:{forUserType: userType}});
+            const userGuides = await userGuide.findAll();
             res.status(200).json({
                 data: userGuides,
                 msg: 'User guides retrieved successfully'
@@ -15,16 +13,22 @@ class userGuideController{
         }
     }
 
-    static async getUserGuidesByString(req, res, next){
+    static async getUserGuideEditData(req, res, next){
         try{
             const { userType } = req.decodedToken;
-            const userGuides = await userGuide.findAll({where:{forUserType: userType, content: {[Op.substring]:req.params.searchString}}});
-            if(userGuides == ""){
-                throw ({name: ""});
+            const id = req.params.id;
+
+            if(!userType.includes('admin')){
+                throw {name: "UNAUTHORIZED"}
             }
+
+            const userGuideData = await userGuide.findAll({
+                where:{id},
+            });
+
             res.status(200).json({
-                data: userGuides,
-                msg: 'User guides retrieved successfully'
+                data: userGuideData,
+                msg: 'User guides edit data retrieved successfully'
             });
         }catch(error){
             next(error);
@@ -38,17 +42,21 @@ class userGuideController{
         }
         try{
             const {
+                title,
                 forUserType,
-                pictureUrl, 
-                content
+                content,
+                section
             } = req.body;
+
+            console.log(req.body);
 
             const transaction = await sequelize.transaction();
 
             const newUserGuide = await userGuide.create({
                 staffID: id,
                 forUserType,
-                pictureUrl,
+                title,
+                section,
                 content
             },{
                 transaction
@@ -68,13 +76,12 @@ class userGuideController{
     static async deleteUserGuide(req, res, next){
         const transaction = await sequelize.transaction();
         try{
-            const { id, userType } = req.decodedToken;
-            const blogToBeDeleted = blog.findAll({where: {id: req.params.id}});
-            if(blogToBeDeleted.staffID !== id || userType.includes('user')){
+            const { userType } = req.decodedToken;
+            if(!userType.includes('admin')){
                 throw ({ name: "UNAUTHORIZED"});
             }
 
-            await blog.destroy({where: {id: req.params.id}}, {transaction});
+            await userGuide.destroy({where: {id: req.params.id}}, {transaction});
             await transaction.commit();
 
             res.status(200).json({
@@ -89,24 +96,27 @@ class userGuideController{
     }
 
     static async editUserGuide(req, res, next){
+        const transaction = await sequelize.transaction();
         try{
-            const {id, userType} = req.decodedToken;
-            const userGuideToBeEdited = await userGuide.findAll({plain: true, where: {id: req.params.id}});
+            const {userType} = req.decodedToken;
+            const {
+                title,
+                forUserType,
+                content,
+                section
+            } = req.body;
             
-            if(!userType.includes('admin') || userGuideToBeEdited.staffID !== id){ 
+            if(!userType.includes('admin')){ 
                 throw ({ name: "UNAUTHORIZED"});
             }
             
-            const {
+            const userGuideToBeEdited = await userGuide.findOne({where: {id: req.params.id}});
+            
+            await userGuideToBeEdited.update({
+                title,
+                forUserType,
                 content,
-                pictureUrl
-            } = req.body;
-            const transaction = await sequelize.transaction();
-            await userGuide.update({
-                content,
-                pictureUrl
-            }, {
-                where: {id: req.params.id}
+                section
             }, {
                 transaction
             });
@@ -119,6 +129,23 @@ class userGuideController{
             if (error.name.includes('Sequelize')) {
                 await transaction.rollback();
             }
+            next(error);
+        }
+    }
+
+    static async getUserGuideSections(req, res, next){
+        try{
+            const sections = await userGuide.findAll({
+                attributes: [
+                    [Sequelize.fn('DISTINCT', Sequelize.col('section')), 'section']
+                ]
+            });
+
+            res.status(200).json({
+                data: sections,
+                msg: 'Sections list retrieved successfully'
+            });
+        }catch(error){
             next(error);
         }
     }

@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       Comment.belongsTo(models.Post, {
         foreignKey: 'postId'
       });
+      Comment.hasMany(models.ReportComment, {
+        foreignKey: 'commentId', 
+        onDelete: 'CASCADE', 
+        onUpdate: 'CASCADE'
+      });
     }
   }
   Comment.init({

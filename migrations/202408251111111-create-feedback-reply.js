@@ -2,32 +2,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('feedbacks', {
+    await queryInterface.createTable('FeedbackReplies', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
+      feedbackId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'feedbacks',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
-      userType: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      feedbackContent: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      pictureUrl: {
-        type: Sequelize.STRING
-      },
-      status: {
-        type: Sequelize.STRING,
+      adminId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 'unread'
+        references: {
+          model: 'staffs',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      },
+      replyContent: {
+        type: Sequelize.TEXT,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('feedbacks');
+    await queryInterface.dropTable('FeedbackReplies');
   }
 };

@@ -2,32 +2,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('feedbacks', {
+    await queryInterface.createTable('BannedPosts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
+      reportId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      userType: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      feedbackContent: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      pictureUrl: {
-        type: Sequelize.STRING
-      },
-      status: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'unread'
+        references: {
+          model: 'ReportPosts',
+          key: 'id'
+          },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +30,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('feedbacks');
+    await queryInterface.dropTable('BannedPosts');
   }
 };

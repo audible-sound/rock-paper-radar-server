@@ -21,7 +21,8 @@ class adminController{
 
             const data = {
                 username: actualStaff.username,
-                pictureUrl: actualStaff.staffProfile.pictureUrl
+                pictureUrl: actualStaff.staffProfile.pictureUrl,
+                userType: actualStaff.userType
             }
 
             const payload = {

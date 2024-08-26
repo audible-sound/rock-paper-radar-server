@@ -23,7 +23,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      pictureUrl: {
+      section: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      title: {
         allowNull: false,
         type: Sequelize.STRING
       },
