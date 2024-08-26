@@ -229,14 +229,14 @@ class staffController{
     static async getReportPost(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'staff'){
+            if(userType != 'admin'){
                 throw ({name: "UNAUTHORIZED"});
             }
             
-            const ReportPost = await ReportPost.findAll();
+            const reportPost = await ReportPost.findAll({include: [User]});
 
             res.status(200).json({
-                data: ReportPost,
+                data: reportPost,
                 msg: 'User Report retrieved successfully'
             })
         }catch(error){
@@ -248,7 +248,7 @@ class staffController{
         const transaction = await sequelize.transaction();
         try {
             const {userType} = req.decodedToken;
-            if(userType != 'staff'){
+            if(userType != 'admin'){
                 throw ({name: "UNAUTHORIZED"});
             }
             const { username } = req.decodedToken;
@@ -283,7 +283,7 @@ class staffController{
     static async getBannedPost(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'staff'){
+            if(!(userType.includes('admin'))){
                 throw ({name: "UNAUTHORIZED"});
             }
             const { username } = req.decodedToken;
@@ -377,6 +377,51 @@ class staffController{
             })
         }catch(error){
             next(error)
+        }
+    }
+
+    static async updateReportPostState(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            if (userType !== 'admin') {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const { reportId, newState } = req.body;
+
+            if (newState !== 'False report' && newState !== 'Banned') {
+                throw ({ name: "INVALID_STATE" });
+            }
+
+            const updatedReportPost = await ReportPost.update(
+                { reportState: newState },
+                { 
+                    where: { id: reportId },
+                    transaction
+                }
+            );
+
+            if (updatedReportPost[0] === 0) {
+                throw ({ name: "REPORT_NOT_FOUND" });
+            }
+
+            if (newState === 'Banned') {
+                await BannedPost.create(
+                    { reportId },
+                    { transaction }
+                );
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                msg: `Report state updated to ${newState} successfully`,
+                data: { reportId, newState }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
         }
     }
 };

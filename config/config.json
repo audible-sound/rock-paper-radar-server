@@ -1,22 +1,22 @@
 {
   "development": {
-    "username": "zhanjiea",
-    "password": "jieajiea04",
-    "database": "sdp",
+    "username": "audywallace",
+    "password": "a",
+    "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
   },
   "test": {
-    "username": "zhanjiea",
-    "password": "jieajiea04",
-    "database": "sdp",
+    "username": "audywallace",
+    "password": "a",
+    "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
   },
   "production": {
-    "username": "zhanjiea",
-    "password": "jieajiea04",
-    "database": "sdp",
+    "username": "audywallace",
+    "password": "a",
+    "database": "rpl",
     "host": "localhost",
     "dialect": "postgresql"
   }}

@@ -10,6 +10,7 @@ router.put('/profile', authHandler, staffController.editstaffProfile);
 router.get('/reportPost', authHandler, staffController.getReportPost)
 router.post('/bannedPost', authHandler, staffController.createBannedPost)
 router.get('/bannedPost', authHandler, staffController.getBannedPost)
+router.put('/reportPost', authHandler, staffController.updateReportPostState)
 
 router.get('/reportComment', authHandler, staffController.getReportComment)
 router.post('/bannedComment', authHandler, staffController.createBannedComment)
