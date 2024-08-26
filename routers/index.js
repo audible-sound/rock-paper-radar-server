@@ -11,6 +11,7 @@ const feedbackRouter = require('./feedback.js');
 const bugReportRouter = require('./bugReport.js');
 const adminRouter = require('./admin.js');
 const commentRouter = require('./comment.js');
+const reportRouter = require('./report.js');
 
 router.use('/user', userRouter);
 router.use('/comment', commentRouter);
@@ -25,6 +26,7 @@ router.use('/travelPlan', travelPlanRouter);
 router.use('/feedback', feedbackRouter);
 router.use('/bugreport', bugReportRouter);
 router.use('/dashboard', dashboardRouter);
+router.use('/report', reportRouter);
 
 router.use('/admin', adminRouter);
 router.use('/blog', blogRouter);

@@ -8,7 +8,7 @@ class reportController{
             if(userType.includes('user')){
                 throw ({ name: "UNAUTHORIZED"});
             }
-            const userReports = await userReport.findAll({where:{forUserType: userType}});
+            const userReports = await userReport.findAll();
             res.status(200).json({
                 data: userReports,
                 msg: 'User reports retrieved successfully'
@@ -67,7 +67,7 @@ class reportController{
     static async editUserReportState(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType.includes('user')){
+            if(userType.includes('admin')){
                 throw ({ name: "UNAUTHORIZED"});
             }
 

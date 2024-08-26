@@ -12,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       userReport.belongsTo(models.User, {
-        foreignKey: 'userID'
+        foreignKey: 'userId'
       })
     }
   }
   userReport.init({
-    userID: {
+    userId: {
       type: 'DataTypes.STRING',
       allowNull: false,
       validate: {

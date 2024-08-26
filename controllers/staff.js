@@ -314,7 +314,7 @@ class staffController{
 
             res.status(200).json({
                 data: getReportComment,
-                msg: 'User Report retrieved successfully'
+                msg: 'Post Report retrieved successfully'
             })
         }catch(error){
             next(error)
@@ -391,11 +391,16 @@ class staffController{
             const { reportId, newState } = req.body;
 
             if (newState !== 'False Report' && newState !== 'Banned') {
+            
+            const { reportId, state } = req.body;
+            console.log(state);
+            console.log(state !== 'Banned');
+            if (state !== 'False report' && state !== 'Banned') {
                 throw ({ name: "INVALID_STATE" });
             }
 
             const updatedReportPost = await ReportPost.update(
-                { reportState: newState },
+                { reportState: state },
                 { 
                     where: { id: reportId },
                     transaction
@@ -406,7 +411,7 @@ class staffController{
                 throw ({ name: "REPORT_NOT_FOUND" });
             }
 
-            if (newState === 'Banned') {
+            if (state === 'Banned') {
                 await BannedPost.create(
                     { reportId },
                     { transaction }
@@ -416,8 +421,8 @@ class staffController{
             await transaction.commit();
 
             res.status(200).json({
-                msg: `Report state updated to ${newState} successfully`,
-                data: { reportId, newState }
+                msg: `Report state updated to ${state} successfully`,
+                data: { reportId, state }
             });
         } catch (error) {
             await transaction.rollback();

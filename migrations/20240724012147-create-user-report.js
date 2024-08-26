@@ -9,9 +9,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userID: {
+      userId: {
         type: Sequelize.INTEGER,
-        unique: true,
         references: {
           model: "Users",
           key: 'id'
@@ -23,7 +22,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         validate: {
-          isIn: [['unverified', 'banned', 'falseReport']]
+          isIn: [['Unreviewed', 'False Report', 'Banned']]
         }
       },
       reportContent: {
