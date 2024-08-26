@@ -2,11 +2,14 @@ const router = require('express').Router();
 const dashboardController = require('../controllers/dashboard.js');
 const authHandler = require('../middlewares/authorization.js');
 
+//Created accounts
 router.get('/totalCreatedUserAccount', authHandler, dashboardController.getTotalCreatedUserAccount)
 
 router.get('/monthlyCreatedUserAccount', authHandler, dashboardController.getMonthlyCreatedUserAccount)
 router.get('/yearlyCreatedUserAccount', authHandler, dashboardController.getYearlyCreatedUserAccount)
 
+
+//Created posts
 router.get('/monthlyCreatedPost', authHandler, dashboardController.getMonthlyCreatedPost)
 router.get('/yearlyCreatedPost', authHandler, dashboardController.getYearlyCreatedPost)
 

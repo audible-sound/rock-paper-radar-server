@@ -2,21 +2,21 @@ const {User, UserProfile, sequelize, Post} = require("../models/index.js");
 const { Op } = require("sequelize");
 
 class dashboardController{
-    static async getTotalCreatedUserAccount(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType !=='admin'){
-                throw ({name: "UNAUTHORIZED"});
+    static async getTotalCreatedUserAccount(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType !== 'admin') {
+                throw ({ name: "UNAUTHORIZED" });
             }
 
-            const TotalCreatedUserAccount = await User.findAll();
+            const totalUsers = await User.count();
 
             res.status(200).json({
-                data: TotalCreatedUserAccount,
+                data: totalUsers,
                 msg: 'Total Created User Account retrieved successfully'
-            })
-        }catch(error){
-            next(error)
+            });
+        } catch (error) {
+            next(error);
         }
     }
 
@@ -33,9 +33,9 @@ class dashboardController{
                     'id',
                     'username',
                     'email',
-                    'gender',
                     'birthDate',
                     'createdAt',
+                    'gender',
                     [sequelize.fn('date_trunc', 'month', sequelize.col('User.createdAt')), 'month']
                 ],
                 include: [{
@@ -51,9 +51,9 @@ class dashboardController{
                 username: user.username,
                 profilePicture: user.UserProfile ? user.UserProfile.profilePictureUrl : null,
                 email: user.email,
-                gender: user.gender,
                 birthDate: user.birthDate,
                 createdAt: user.createdAt,
+                gender: user.gender,
                 month: user.dataValues.month
             }));
 
@@ -73,20 +73,26 @@ class dashboardController{
                 throw ({ name: "UNAUTHORIZED" });
             }
 
+            const currentYear = new Date().getFullYear();
             const yearlyCreatedAccounts = await User.findAll({
                 attributes: [
                     'id',
                     'username',
                     'email',
-                    'gender',
                     'birthDate',
                     'createdAt',
-                    [sequelize.fn('date_trunc', 'year', sequelize.col('createdAt')), 'year']
+                    'gender',
+                    [sequelize.fn('date_trunc', 'year', sequelize.col('User.createdAt')), 'year']
                 ],
                 include: [{
                     model: UserProfile,
                     attributes: ['profilePictureUrl']
                 }],
+                where: {
+                    createdAt: {
+                        [Op.gte]: new Date(currentYear - 4, 0, 1)
+                    }
+                },
                 order: [['createdAt', 'DESC']]
             });
 
@@ -95,9 +101,9 @@ class dashboardController{
                 username: user.username,
                 profilePicture: user.UserProfile ? user.UserProfile.profilePictureUrl : null,
                 email: user.email,
-                gender: user.gender,
                 birthDate: user.birthDate,
                 createdAt: user.createdAt,
+                gender: user.gender,
                 year: user.dataValues.year
             }));
 
@@ -109,63 +115,99 @@ class dashboardController{
             next(error);
         }
     }
+
     static async getMonthlyCreatedPost(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'staff'){
+            if(userType !== 'staff'){
                 throw ({name: "UNAUTHORIZED"});
             }
 
             const currentDate = new Date();
-            const currentMonth = currentDate.getMonth()+1;
             const currentYear = currentDate.getFullYear();
 
-            const MonthlyCreatedUserAccount = await Post.findAll({
-                where: {
-                    createdAt: {
-                        [Op.and]: [
-                            sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('MONTH FROM "createdAt"')), currentMonth),
-                            sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('YEAR FROM "createdAt"')), currentYear)
-                        ]
-                    }
-                }
+            const MonthlyCreatedPosts = await Post.findAll({
+                attributes: [
+                    'id',
+                    'postTitle',
+                    'createdAt',
+                    [sequelize.fn('date_trunc', 'month', sequelize.col('Post.createdAt')), 'month']
+                ],
+                where: sequelize.where(sequelize.fn('date_part', 'year', sequelize.col('Post.createdAt')), currentYear),
+                include: [{
+                    model: User,
+                    attributes: ['username'],
+                    include: [{
+                        model: UserProfile,
+                        attributes: ['profilePictureUrl']
+                    }]
+                }],
+                order: [['createdAt', 'DESC']]
             });
 
+            const formattedPosts = MonthlyCreatedPosts.map(post => ({
+                id: post.id,
+                postTitle: post.postTitle,
+                createdAt: post.createdAt,
+                month: post.dataValues.month,
+                author: {
+                    username: post.User.username,
+                    profilePictureUrl: post.User.UserProfile.profilePictureUrl
+                }
+            }));
+
             res.status(200).json({
-                data: MonthlyCreatedUserAccount,
-                msg: 'Monthly Created User Account retrieved successfully'
-            })
-        }catch(error){
-            next(error)
+                data: formattedPosts,
+                msg: 'Monthly Created Posts retrieved successfully'
+            });
+        } catch(error){
+            next(error);
         }
     }
 
     static async getYearlyCreatedPost(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'staff'){
+            if(userType !== 'staff'){
                 throw ({name: "UNAUTHORIZED"});
             }
 
             const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
+            const fiveYearsAgo = new Date(currentDate.setFullYear(currentDate.getFullYear() - 5));
 
-            const YearlyCreatedUserAccount = await Post.findAll({
+            const YearlyCreatedPosts = await Post.findAll({
                 where: {
                     createdAt: {
-                        [Op.and]: [
-                            sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('YEAR FROM "createdAt"')), currentYear)
-                        ]
+                        [Op.gte]: fiveYearsAgo
                     }
-                }
+                },
+                include: [{
+                    model: User,
+                    attributes: ['username'],
+                    include: [{
+                        model: UserProfile,
+                        attributes: ['profilePictureUrl']
+                    }]
+                }],
+                order: [['createdAt', 'DESC']]
             });
 
+            const formattedPosts = YearlyCreatedPosts.map(post => ({
+                id: post.id,
+                postTitle: post.postTitle,
+                createdAt: post.createdAt,
+                author: {
+                    username: post.User.username,
+                    profilePictureUrl: post.User.UserProfile.profilePictureUrl
+                }
+            }));
+
             res.status(200).json({
-                data: YearlyCreatedUserAccount,
-                msg: 'Yearly Created User Account retrieved successfully'
-            })
-        }catch(error){
-            next(error)
+                data: formattedPosts,
+                msg: 'Yearly Created Posts retrieved successfully'
+            });
+        } catch(error){
+            next(error);
         }
     }
 
@@ -176,30 +218,26 @@ class dashboardController{
                 throw ({ name: "UNAUTHORIZED" });
             }
 
-            const totalUsers = await User.findAll({
-                attributes: ['id', 'username', 'email', 'gender', 'birthDate', 'createdAt'],
-                include: [{
-                    model: UserProfile,
-                    attributes: ['profilePictureUrl'],
-                }],
-                order: [['createdAt', 'DESC']]
+            const currentYear = new Date().getFullYear();
+            const totalUsersPerMonth = await User.findAll({
+                attributes: [
+                    [sequelize.fn('date_trunc', 'month', sequelize.col('createdAt')), 'month'],
+                    [sequelize.fn('count', sequelize.col('id')), 'count']
+                ],
+                where: sequelize.where(sequelize.fn('date_part', 'year', sequelize.col('createdAt')), currentYear),
+                group: [sequelize.fn('date_trunc', 'month', sequelize.col('createdAt'))],
+                order: [[sequelize.fn('date_trunc', 'month', sequelize.col('createdAt')), 'ASC']]
             });
 
-            const formattedUsers = totalUsers.map(user => ({
-                id: user.id,
-                profilePicture: user.UserProfile ? user.UserProfile.profilePictureUrl : null,
-                username: user.username,
-                email: user.email,
-                gender: user.gender,
-                birthDate: user.birthDate,
-                createdAt: user.createdAt
+            const formattedData = totalUsersPerMonth.map((item, index) => ({
+                month: new Date(item.dataValues.month).toLocaleString('default', { month: 'short' }),
+                count: item.dataValues.count,
+                totalUsers: totalUsersPerMonth.slice(0, index + 1).reduce((sum, curr) => sum + parseInt(curr.dataValues.count), 0)
             }));
 
-            const totalUsersCount = totalUsers.length;
-
             res.status(200).json({
-                data: { count: totalUsersCount, users: formattedUsers },
-                msg: 'Total users retrieved successfully'
+                data: formattedData,
+                msg: 'Total users per month retrieved successfully'
             });
         } catch (error) {
             next(error);
@@ -213,19 +251,41 @@ class dashboardController{
                 throw ({ name: "UNAUTHORIZED" });
             }
 
-            const currentYear = new Date().getFullYear();
+            const currentDate = new Date();
+            const oneYearAgo = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1));
+
             const monthlyUsers = await User.findAll({
                 attributes: [
-                    [sequelize.fn('date_trunc', 'month', sequelize.col('createdAt')), 'month'],
-                    [sequelize.fn('count', sequelize.col('id')), 'count']
+                    'id',
+                    'username',
+                    'email',
+                    'createdAt',
+                    [sequelize.fn('date_trunc', 'month', sequelize.col('User.createdAt')), 'month']
                 ],
-                where: sequelize.where(sequelize.fn('date_part', 'year', sequelize.col('createdAt')), currentYear),
-                group: [sequelize.fn('date_trunc', 'month', sequelize.col('createdAt'))],
-                order: [[sequelize.fn('date_trunc', 'month', sequelize.col('createdAt')), 'ASC']]
+                where: {
+                    createdAt: {
+                        [Op.gte]: oneYearAgo
+                    }
+                },
+                order: [['createdAt', 'ASC']]
             });
 
+            const formattedData = monthlyUsers.reduce((acc, user) => {
+                const month = new Date(user.dataValues.month).toLocaleString('default', { month: 'long', year: 'numeric' });
+                if (!acc[month]) {
+                    acc[month] = [];
+                }
+                acc[month].push({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    joinedAt: user.createdAt
+                });
+                return acc;
+            }, {});
+
             res.status(200).json({
-                data: monthlyUsers,
+                data: formattedData,
                 msg: 'Monthly users retrieved successfully'
             });
         } catch (error) {
@@ -240,18 +300,47 @@ class dashboardController{
                 throw ({ name: "UNAUTHORIZED" });
             }
 
+            const currentYear = new Date().getFullYear();
+            const fiveYearsAgo = currentYear - 4;
+
             const yearlyUsers = await User.findAll({
                 attributes: [
-                    [sequelize.fn('date_trunc', 'year', sequelize.col('createdAt')), 'year'],
-                    [sequelize.fn('count', sequelize.col('id')), 'count']
+                    'id',
+                    'username',
+                    'email',
+                    'createdAt',
+                    [sequelize.fn('date_trunc', 'year', sequelize.col('User.createdAt')), 'year']
                 ],
-                group: [sequelize.fn('date_trunc', 'year', sequelize.col('createdAt'))],
-                order: [[sequelize.fn('date_trunc', 'year', sequelize.col('createdAt')), 'ASC']]
+                where: {
+                    createdAt: {
+                        [Op.gte]: new Date(`${fiveYearsAgo}-01-01`)
+                    }
+                },
+                include: [{
+                    model: UserProfile,
+                    attributes: ['profilePictureUrl']
+                }],
+                order: [[sequelize.col('User.createdAt'), 'ASC']]
             });
 
+            const formattedData = yearlyUsers.reduce((acc, user) => {
+                const year = new Date(user.dataValues.year).getFullYear().toString();
+                if (!acc[year]) {
+                    acc[year] = [];
+                }
+                acc[year].push({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    profilePicture: user.UserProfile ? user.UserProfile.profilePictureUrl : null,
+                    joinedAt: user.createdAt
+                });
+                return acc;
+            }, {});
+
             res.status(200).json({
-                data: yearlyUsers,
-                msg: 'Yearly users retrieved successfully'
+                data: formattedData,
+                msg: 'Yearly users for the past five years retrieved successfully'
             });
         } catch (error) {
             next(error);

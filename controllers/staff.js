@@ -1,8 +1,8 @@
-const { staff, staffProfile, sequelize, BannedPost, ReportComment, BannedComment, blog, userGuide, Post, User, UserProfile, PostTag } = require("../models/index.js");
-const {hashPassword, comparePassword} = require("../helpers/encryption.js");
-const {createToken} = require("../helpers/accessToken.js");
+const { staff, staffProfile, sequelize, BannedPost, BannedComment, blog, userGuide, Post, User, UserProfile, PostTag, ReportPost, ReportComment, Comment, userReport } = require("../models/index.js");
+const { hashPassword, comparePassword } = require("../helpers/encryption.js");
+const { createToken } = require("../helpers/accessToken.js");
 
-class staffController{
+class staffController {
     static async getPersonalProfile(req, res, next) {
         try {
             const { username } = req.decodedToken;
@@ -30,7 +30,7 @@ class staffController{
                 where: { username: givenUsername },
                 include: [staffProfile]
             })
-            const blogsCount = await blog.count({where: {id: actualStaff.id}})
+            const blogsCount = await blog.count({ where: { id: actualStaff.id } })
             res.status(200).json({
                 message: 'Data retrieved successfully',
                 data: {
@@ -52,16 +52,16 @@ class staffController{
         }
     }
 
-    static async editstaffProfile(req, res, next){
+    static async editstaffProfile(req, res, next) {
         const transaction = await sequelize.transaction();
-        try{
-            const {id, userType} = req.decodedToken;
-            const staffProfileToBeEdited = await staff.findAll({plain: true, where: {id}});
-            const blogsCount = await blog.count({ where: {staffID: id}});
-            if(!staffProfileToBeEdited || userType.includes('user')){
-                throw ({ name: "UNAUTHORIZED"});
+        try {
+            const { id, userType } = req.decodedToken;
+            const staffProfileToBeEdited = await staff.findAll({ plain: true, where: { id } });
+            const blogsCount = await blog.count({ where: { staffID: id } });
+            if (!staffProfileToBeEdited || userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
             }
-            
+
             const {
                 email,
                 birthDate,
@@ -79,7 +79,7 @@ class staffController{
                 country,
                 phoneNumber,
             }, {
-                where: {id}
+                where: { id }
             }, {
                 transaction
             });
@@ -88,7 +88,7 @@ class staffController{
                 profileDescription,
                 pictureUrl: profilePictureUrl
             }, {
-                where: {staffID: id}
+                where: { staffID: id }
             }, {
                 transaction
             });
@@ -101,7 +101,7 @@ class staffController{
                     profilePictureUrl: profilePictureUrl
                 }
             });
-        }catch(error){
+        } catch (error) {
             if (error.name.includes('Sequelize')) {
                 await transaction.rollback();
             }
@@ -109,20 +109,20 @@ class staffController{
         }
     }
 
-    static async signIn(req, res, next){
-        try{
-            const {username, password} = req.body;
+    static async signIn(req, res, next) {
+        try {
+            const { username, password } = req.body;
             const actualStaff = await staff.findOne({
                 where: { username },
                 include: [staffProfile]
             });
-            if(!actualStaff){
-                throw ({name: "INVALID_USERNAME"});
+            if (!actualStaff) {
+                throw ({ name: "INVALID_USERNAME" });
             }
 
             const isMatch = await comparePassword(password, actualStaff.password);
-            if(!isMatch){
-                throw ({name: "INVALID_PASSWORD"});
+            if (!isMatch) {
+                throw ({ name: "INVALID_PASSWORD" });
             }
 
             const data = {
@@ -144,15 +144,15 @@ class staffController{
                 data,
                 accessToken
             });
-        }catch(error){
+        } catch (error) {
             next(error);
         }
     }
 
-    static async registerStaff(req, res, next){
+    static async registerStaff(req, res, next) {
         const transaction = await sequelize.transaction();
-        try{
-            const{
+        try {
+            const {
                 username,
                 password,
                 confirmPassword,
@@ -166,8 +166,8 @@ class staffController{
                 pictureUrl
             } = req.body;
 
-            if(password != confirmPassword){
-                throw({name: "PASSWORDS_DO_NOT_MATCH"});
+            if (password != confirmPassword) {
+                throw ({ name: "PASSWORDS_DO_NOT_MATCH" });
             }
 
             const hashedPassword = await hashPassword(password);
@@ -213,28 +213,29 @@ class staffController{
                 data,
                 accessToken
             })
-        }catch(error){
-            if(error.name.includes('Sequelize')){
+        } catch (error) {
+            if (error.name.includes('Sequelize')) {
                 await transaction.rollback();
             }
             next(error);
         }
     }
 
-    static async getReportPost(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+    static async getReportPost(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
             }
 
-            const ReportPost = await ReportPost.findAll();
+            const reportPost = await ReportPost.findAll({ include: [User] });
+            console.log(reportPost);
 
             res.status(200).json({
-                data: ReportPost,
+                data: reportPost,
                 msg: 'User Report retrieved successfully'
             })
-        }catch(error){
+        } catch (error) {
             next(error)
         }
     }
@@ -242,9 +243,9 @@ class staffController{
     static async createBannedPost(req, res, next) {
         const transaction = await sequelize.transaction();
         try {
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+            const { userType } = req.decodedToken;
+            if (userType != 'staff') {
+                throw ({ name: "UNAUTHORIZED" });
             }
             const { username } = req.decodedToken;
             const actualUser = await staff.findOne({ where: { username } });
@@ -258,12 +259,12 @@ class staffController{
 
             const createdBannedPost = await BannedPost.create({
                 reportId,
-            }, { transaction});
+            }, { transaction });
             await transaction.commit();
 
             const data = {
                 id: createdBannedPost.id,
-                date: createdBannedPost.createdAt                
+                date: createdBannedPost.createdAt
             }
 
             res.status(201).json({
@@ -275,11 +276,11 @@ class staffController{
         }
     }
 
-    static async getBannedPost(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+    static async getBannedPost(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType != 'staff') {
+                throw ({ name: "UNAUTHORIZED" });
             }
             const { username } = req.decodedToken;
             const actualUser = await staff.findOne({ where: { username } });
@@ -293,25 +294,42 @@ class staffController{
                 data: createdBannedPost,
                 msg: 'Banned Post retrieved successfully'
             })
-        }catch(error){
+        } catch (error) {
             next(error)
         }
     }
 
-    static async getReportComment(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+    static async getReportComment(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType != 'staff') {
+                throw ({ name: "UNAUTHORIZED" });
             }
 
-            const getReportComment = await ReportComment.findAll();
+            const getReportComment = await ReportComment.findAll({
+                include: [
+                    {
+                        model: User,
+                        attributes: ['username']
+                    },
+                    {
+                        model: Comment,
+                        attributes: ['commentContent']
+                    }
+                ]
+            });
+
+            const formattedReportComments = getReportComment.map(report => ({
+                ...report.toJSON(),
+                username: report.User.username,
+                commentContent: report.Comment.commentContent
+            }));
 
             res.status(200).json({
-                data: getReportComment,
+                data: formattedReportComments,
                 msg: 'User Report retrieved successfully'
             })
-        }catch(error){
+        } catch (error) {
             next(error)
         }
     }
@@ -319,9 +337,9 @@ class staffController{
     static async createBannedComment(req, res, next) {
         const transaction = await sequelize.transaction();
         try {
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+            const { userType } = req.decodedToken;
+            if (userType != 'staff') {
+                throw ({ name: "UNAUTHORIZED" });
             }
             const { username } = req.decodedToken;
             const actualUser = await staff.findOne({ where: { username } });
@@ -335,12 +353,12 @@ class staffController{
 
             const createdBannedComment = await BannedComment.create({
                 reportId,
-            }, { transaction});
+            }, { transaction });
             await transaction.commit();
 
             const data = {
                 id: createdBannedComment.id,
-                date: createdBannedComment.createdAt                
+                date: createdBannedComment.createdAt
             }
 
             res.status(201).json({
@@ -352,11 +370,11 @@ class staffController{
         }
     }
 
-    static async getBannedComment(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType != 'staff'){
-                throw ({name: "UNAUTHORIZED"});
+    static async getBannedComment(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType != 'staff') {
+                throw ({ name: "UNAUTHORIZED" });
             }
             const { username } = req.decodedToken;
             const actualUser = await staff.findOne({ where: { username } });
@@ -370,7 +388,7 @@ class staffController{
                 data: createdBannedComment,
                 msg: 'Banned Comment retrieved successfully'
             })
-        }catch(error){
+        } catch (error) {
             next(error)
         }
     }
@@ -488,6 +506,161 @@ class staffController{
             next(error);
         }
     }
+
+    static async getReportUser(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType.includes('user')){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            
+            const reportUsers = await userReport.findAll({include: [User]});
+
+            res.status(200).json({
+                data: reportUsers,
+                msg: 'User Report retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }
+
+    static async updateReportPostState(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const { reportId, state } = req.body;
+            console.log(state);
+            console.log(state !== 'Banned');
+            if (state !== 'False report' && state !== 'Banned') {
+                throw ({ name: "INVALID_STATE" });
+            }
+
+            const updatedReportPost = await ReportPost.update(
+                { reportState: state },
+                {
+                    where: { id: reportId },
+                    transaction
+                }
+            );
+
+            if (updatedReportPost[0] === 0) {
+                throw ({ name: "REPORT_NOT_FOUND" });
+            }
+
+            if (state === 'Banned') {
+                await BannedPost.create(
+                    { reportId },
+                    { transaction }
+                );
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                msg: `Report state updated to ${state} successfully`,
+                data: { reportId, state }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+    }
+
+    static async updateReportCommentState(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const { reportId, state } = req.body;
+
+            if (state !== 'False Report' && state !== 'Banned') {
+                throw ({ name: "INVALID_STATE" });
+            }
+
+            const updatedReportComment = await ReportComment.update(
+                { reportState: state },
+                {
+                    where: { id: reportId },
+                    transaction
+                }
+            );
+
+            if (updatedReportComment[0] === 0) {
+                throw ({ name: "REPORT_NOT_FOUND" });
+            }
+
+            if (state === 'Banned') {
+                await BannedComment.create(
+                    { reportId },
+                    { transaction }
+                );
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                msg: `Report state updated to ${state} successfully`,
+                data: { reportId, state }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+    }
+
+    static async updateReportUserState(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const { reportId, state } = req.body;
+
+            if (state !== 'False Report' && state !== 'Banned') {
+                throw ({ name: "INVALID_STATE" });
+            }
+            const updatedReportComment = await userReport.update(
+                { reportState: state },
+                {
+                    where: { id: reportId },
+                    transaction
+                }
+            );
+
+            if (updatedReportComment[0] === 0) {
+                throw ({ name: "REPORT_NOT_FOUND" });
+            }
+
+            if (state === 'Banned') {
+                await BannedComment.create(
+                    { reportId },
+                    { transaction }
+                );
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                msg: `Report state updated to ${state} successfully`,
+                data: { reportId, state }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+
+    }
+
 };
 
 module.exports = staffController;

@@ -1,4 +1,5 @@
 'use strict';
+const { faker } = require('@faker-js/faker');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -6,32 +7,37 @@ module.exports = {
     const postTags = [];
     const userLikes = new Set();
 
-    for (let userId = 1; userId <= 20; userId++) {
-      for (let j = 1; j <= 5; j++) {
-        const postId = (userId - 1) * 5 + j;
+    for (let userId = 1; userId <= 100; userId++) {
+      const numPosts = faker.number.int({ min: 1, max: 5 });
+      for (let j = 1; j <= numPosts; j++) {
+        const postId = posts.length + 1;
+        const createdAt = faker.date.between({ from: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000), to: new Date() });
         posts.push({
           userId: userId,
-          postTitle: `Amazing trip to ${['Paris', 'Tokyo', 'New York', 'London', 'Sydney'][j - 1]}`,
-          pictureUrl: `https://picsum.photos/1920/1080?random=${postId}`,
-          postContent: `Had an incredible time exploring ${['Paris', 'Tokyo', 'New York', 'London', 'Sydney'][j - 1]}. The culture, food, and sights were unforgettable!`,
-          location: ['Paris', 'Tokyo', 'New York', 'London', 'Sydney'][j - 1],
-          postLikes: Math.floor(Math.random() * 100),
-          createdAt: new Date(),
-          updatedAt: new Date()
+          postTitle: faker.lorem.sentence(),
+          pictureUrl: faker.image.url(),
+          postContent: faker.lorem.paragraph(),
+          location: faker.location.city(),
+          postLikes: faker.number.int({ min: 0, max: 100 }),
+          createdAt: createdAt,
+          updatedAt: createdAt
         });
 
-        ['Historical', 'Scenery', 'Food', 'Adventure', 'Nature'].forEach(tag => {
+        const categories = ['Historical', 'Scenery', 'Food', 'Adventure', 'Nature'];
+        const numTags = faker.number.int({ min: 1, max: 3 });
+        const selectedCategories = faker.helpers.arrayElements(categories, numTags);
+        for (let category of selectedCategories) {
           postTags.push({
-            name: tag,
+            name: category,
             postId: postId,
-            createdAt: new Date(),
-            updatedAt: new Date()
+            createdAt: createdAt,
+            updatedAt: createdAt
           });
-        });
+        }
 
-        // Generate unique likes
-        for (let k = 0; k < Math.floor(Math.random() * 10); k++) {
-          const likeUserId = Math.floor(Math.random() * 20) + 1;
+        const numLikes = faker.number.int({ min: 0, max: 20 });
+        for (let k = 0; k < numLikes; k++) {
+          const likeUserId = faker.number.int({ min: 1, max: 100 });
           const userPostPair = `${likeUserId}-${postId}`;
           if (!userLikes.has(userPostPair)) {
             userLikes.add(userPostPair);
@@ -40,35 +46,20 @@ module.exports = {
       }
     }
 
-    // Insert Posts first
     await queryInterface.bulkInsert('Posts', posts, {});
-
-    // Fetch the inserted posts to get their actual IDs
-    const insertedPosts = await queryInterface.sequelize.query(
-      `SELECT id FROM "Posts" ORDER BY id ASC LIMIT ${posts.length}`,
-      { type: queryInterface.sequelize.QueryTypes.SELECT }
-    );
-
-    // Update postTags with the actual post IDs
-    postTags.forEach((tag, index) => {
-      tag.postId = insertedPosts[Math.floor(index / 5)].id;
-    });
-
-    // Now insert PostTags
     await queryInterface.bulkInsert('PostTags', postTags, {});
 
-    // Create UserLikes array from the unique set
     const userLikesArray = Array.from(userLikes).map(pair => {
       const [userId, postId] = pair.split('-');
+      const createdAt = faker.date.between({ from: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000), to: new Date() });
       return {
         userId: parseInt(userId),
         postId: parseInt(postId),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: createdAt,
+        updatedAt: createdAt
       };
     });
 
-    // Insert UserLikes
     await queryInterface.bulkInsert('UserLikes', userLikesArray, {});
   },
 

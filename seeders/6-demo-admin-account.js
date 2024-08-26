@@ -1,67 +1,42 @@
 'use strict';
+const { faker } = require('@faker-js/faker');
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    const staffs = [];
+    const staffProfiles = [];
 
-    await queryInterface.bulkInsert('staffs', [{
-      fullName: 'Albert Tan',
-      username: 'test',
-      password: '$2b$10$V0Rq4ByV/3XzLDZxISZfBeJPIoZ6Lg/Jaj4Ps.ZXLO.r0QoEB7iOa',
-      userType: 'admin',
-      email: 'test@gmail.com',
-      birthDate: '2005-12-23 08:00:00+08',
-      gender: 'male',
-      country: 'Malaysia',
-      phoneNumber: '0192718776',
-      createdAt: '2024-08-17 17:56:17.978+08',
-      updatedAt: '2024-08-17 17:56:17.978+08'
-    },{
-      fullName: 'Test account 2',
-      username: 'testing2',
-      password: '$2b$10$V0Rq4ByV/3XzLDZxISZfBeJPIoZ6Lg/Jaj4Ps.ZXLO.r0QoEB7iOa',
-      userType: 'admin',
-      email: 'testing@gmail.com',
-      birthDate: '2005-12-23 08:00:00+08',
-      gender: 'male',
-      country: 'Malaysia',
-      phoneNumber: '0192618776',
-      createdAt: '2024-08-17 17:56:17.978+08',
-      updatedAt: '2024-08-17 17:56:17.978+08'
-    }])
+    for (let i = 1; i <= 5; i++) {
+      const createdAt = faker.date.between({ from: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000), to: new Date() });
+      staffs.push({
+        fullName: faker.person.fullName(),
+        username: faker.internet.userName(),
+        password: '$2b$10$V0Rq4ByV/3XzLDZxISZfBeJPIoZ6Lg/Jaj4Ps.ZXLO.r0QoEB7iOa', // You might want to use a proper hashing function here
+        userType: 'admin',
+        email: faker.internet.email(),
+        birthDate: faker.date.birthdate({ min: 18, max: 65, mode: 'age' }),
+        gender: faker.person.sex(),
+        country: faker.location.country(),
+        phoneNumber: faker.phone.number(),
+        createdAt: createdAt,
+        updatedAt: createdAt
+      });
 
-    await queryInterface.bulkInsert('staffProfiles', [{
-      id: 1,
-      staffID: 1,
-      profileDescription: 'test',
-      pictureUrl: 'https://pbs.twimg.com/media/CT8iWc8VEAAGdNX.jpg',
-      createdAt: '2024-08-17 17:56:17.978+08',
-      updatedAt: '2024-08-17 17:56:17.978+08'
-    },{
-      id: 2,
-      staffID: 2,
-      profileDescription: 'test',
-      pictureUrl: 'https://pbs.twimg.com/media/CT8iWc8VEAAGdNX.jpg',
-      createdAt: '2024-08-17 17:56:17.978+08',
-      updatedAt: '2024-08-17 17:56:17.978+08'
-    }])
+      staffProfiles.push({
+        staffID: i,
+        profileDescription: faker.lorem.sentence(),
+        pictureUrl: faker.image.avatar(),
+        createdAt: createdAt,
+        updatedAt: createdAt
+      });
+    }
+
+    await queryInterface.bulkInsert('staffs', staffs);
+    await queryInterface.bulkInsert('staffProfiles', staffProfiles);
   },
 
   async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('staffProfiles', null, {});
+    await queryInterface.bulkDelete('staffs', null, {});
   }
 };

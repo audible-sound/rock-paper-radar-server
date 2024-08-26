@@ -1,31 +1,33 @@
 'use strict';
 const { hashPassword } = require('../helpers/encryption.js');
+const { faker } = require('@faker-js/faker');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const users = [];
     const userProfiles = [];
 
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 100; i++) {
       const hashedPassword = await hashPassword('password123');
+      const createdAt = faker.date.between({ from: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000), to: new Date() });
       users.push({
-        username: `user${i}`,
+        username: faker.internet.userName(),
         password: hashedPassword,
-        email: `user${i}@example.com`,
-        birthDate: new Date(1990, 0, i),
-        gender: i % 2 === 0 ? 'male' : 'female',
-        country: ['USA', 'Canada', 'UK', 'Australia', 'Japan'][i % 5],
-        phoneNumber: `+1${String(i).padStart(10, '0')}`,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        email: faker.internet.email(),
+        birthDate: faker.date.birthdate({ min: 18, max: 65, mode: 'age' }),
+        gender: faker.person.sex(),
+        country: faker.location.country(),
+        phoneNumber: faker.phone.number(),
+        createdAt: createdAt,
+        updatedAt: createdAt
       });
 
       userProfiles.push({
         userId: i,
-        profileDescription: `I'm user ${i}, and I love traveling!`,
-        profilePictureUrl: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i}.jpg`,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        profileDescription: faker.lorem.sentence(),
+        profilePictureUrl: faker.image.avatar(),
+        createdAt: createdAt,
+        updatedAt: createdAt
       });
     }
 

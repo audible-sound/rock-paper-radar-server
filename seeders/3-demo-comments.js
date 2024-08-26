@@ -1,17 +1,24 @@
 'use strict';
+const { faker } = require('@faker-js/faker');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const comments = [];
+    const posts = await queryInterface.sequelize.query(
+      `SELECT id FROM "Posts"`,
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
 
-    for (let postId = 1; postId <= 100; postId++) {
-      for (let i = 1; i <= 3; i++) {
+    for (let post of posts) {
+      const numComments = faker.number.int({ min: 0, max: 5 });
+      for (let i = 0; i < numComments; i++) {
+        const createdAt = faker.date.between({ from: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000), to: new Date() });
         comments.push({
-          userId: Math.floor(Math.random() * 20) + 1,
-          postId: postId,
-          commentContent: `Great post! I ${['loved', 'enjoyed', 'appreciated'][i - 1]} seeing your travel experience.`,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          userId: faker.number.int({ min: 1, max: 100 }),
+          postId: post.id,
+          commentContent: faker.lorem.sentence(),
+          createdAt: createdAt,
+          updatedAt: createdAt
         });
       }
     }

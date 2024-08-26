@@ -8,10 +8,12 @@ router.get('/profile', authHandler, staffController.getProfile);
 router.put('/profile', authHandler, staffController.editstaffProfile);
 
 router.get('/reportPost', authHandler, staffController.getReportPost)
+router.put('/reportPost', authHandler, staffController.updateReportPostState)
 router.post('/bannedPost', authHandler, staffController.createBannedPost)
 router.get('/bannedPost', authHandler, staffController.getBannedPost)
 
 router.get('/reportComment', authHandler, staffController.getReportComment)
+router.put('/reportComment', authHandler, staffController.updateReportCommentState)
 router.post('/bannedComment', authHandler, staffController.createBannedComment)
 router.get('/bannedComment', authHandler, staffController.getBannedComment)
 
@@ -19,5 +21,8 @@ router.get('/travelPost/:id', authHandler, staffController.getTravelPostById);
 
 router.put('/update/:id', authHandler, staffController.updateStaffAccount);
 router.delete('/:id', authHandler, staffController.deleteStaff);
+
+router.get('/reportUser', authHandler, staffController.getReportUser);
+router.put('/reportUser', authHandler, staffController.updateReportUserState);
 
 module.exports = router
