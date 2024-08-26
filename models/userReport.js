@@ -30,6 +30,19 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    reportedUserId: {
+      type: 'DataTypes.STRING',
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Reported User ID cannot be null',
+          args: true},
+        notEmpty: {
+          msg: 'Reported User ID cannot be empty',
+          args: true
+        }
+      }
+    },
     reportState: {
       type: 'DataTypes.STRING',
       allowNull: false,

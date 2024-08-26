@@ -17,5 +17,6 @@ router.delete('/:id', authHandler, TravelPostController.deletePost);
 
 router.post('/reportPost',authHandler,TravelPostController.createReportPost);
 router.post('/reportComment',authHandler,TravelPostController.createReportComment);
+router.post('/reportUser',authHandler,TravelPostController.createReportUser);
 
 module.exports = router;

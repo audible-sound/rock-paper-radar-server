@@ -1,4 +1,4 @@
-const {User, staff, staffProfile, sequelize, ReportPost, BannedPost, ReportComment, BannedComment, blog, Comment} = require("../models/index.js");
+const {User, staff, staffProfile, sequelize, ReportPost, BannedPost, ReportComment, BannedComment, blog, Comment, userReport} = require("../models/index.js");
 const {hashPassword, comparePassword} = require("../helpers/encryption.js");
 const {createToken} = require("../helpers/accessToken.js");
 const staffprofile = require("../models/staffprofile.js");
@@ -229,7 +229,7 @@ class staffController{
     static async getReportPost(req, res, next){
         try{
             const {userType} = req.decodedToken;
-            if(userType != 'admin'){
+            if(userType.includes('user')){
                 throw ({name: "UNAUTHORIZED"});
             }
             
@@ -237,6 +237,24 @@ class staffController{
 
             res.status(200).json({
                 data: reportPost,
+                msg: 'User Report retrieved successfully'
+            })
+        }catch(error){
+            next(error)
+        }
+    }
+
+    static async getReportUser(req, res, next){
+        try{
+            const {userType} = req.decodedToken;
+            if(userType.includes('user')){
+                throw ({name: "UNAUTHORIZED"});
+            }
+            
+            const reportUsers = await userReport.findAll({include: [User]});
+
+            res.status(200).json({
+                data: reportUsers,
                 msg: 'User Report retrieved successfully'
             })
         }catch(error){
@@ -387,10 +405,6 @@ class staffController{
             if (userType.includes('user')) {
                 throw ({ name: "UNAUTHORIZED" });
             }
-
-            const { reportId, newState } = req.body;
-
-            if (newState !== 'False Report' && newState !== 'Banned') {
             
             const { reportId, state } = req.body;
             console.log(state);
@@ -445,6 +459,51 @@ class staffController{
             }
 
             const updatedReportComment = await ReportComment.update(
+                { reportState: state },
+                { 
+                    where: { id: reportId },
+                    transaction
+                }
+            );
+
+            if (updatedReportComment[0] === 0) {
+                throw ({ name: "REPORT_NOT_FOUND" });
+            }
+
+            if (state === 'Banned') {
+                await BannedComment.create(
+                    { reportId },
+                    { transaction }
+                );
+            }
+
+            await transaction.commit();
+
+            res.status(200).json({
+                msg: `Report state updated to ${state} successfully`,
+                data: { reportId, state }
+            });
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+    }
+
+    static async updateReportUserState(req, res, next) {
+        const transaction = await sequelize.transaction();
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const { reportId, state } = req.body;
+
+            if (state !== 'False Report' && state !== 'Banned') {
+                throw ({ name: "INVALID_STATE" });
+            }
+
+            const updatedReportComment = await userReport.update(
                 { reportState: state },
                 { 
                     where: { id: reportId },

@@ -226,6 +226,20 @@ class UserController {
             next(error);
         }
     }
+
+    static async getUserInfoFromId(req, res, next){
+        try{
+            const { id } = req.params;
+            const userInfo = await User.findOne({where: parseInt(id), include: [UserProfile]});
+
+            res.status(200).json({
+                message: 'User data retrieved succssfully',
+                data: userInfo
+            })
+        }catch(error){
+            next(error);
+        }
+    }
 };
 
 module.exports = UserController;
