@@ -15,5 +15,6 @@ router.put('/reportPost', authHandler, staffController.updateReportPostState)
 router.get('/reportComment', authHandler, staffController.getReportComment)
 router.post('/bannedComment', authHandler, staffController.createBannedComment)
 router.get('/bannedComment', authHandler, staffController.getBannedComment)
+router.put('/reportComment', authHandler, staffController.updateReportCommentState)
 
 module.exports = router

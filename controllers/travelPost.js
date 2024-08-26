@@ -356,7 +356,7 @@ class TravelPostController {
             const createdReportComment = await ReportComment.create({
                 userId,
                 commentId,
-                reportState: 'unverified',
+                reportState: 'Unreviewed',
                 reportContent,
             }, { transaction });
             await transaction.commit();

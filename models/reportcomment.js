@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: {
           msg: 'reportState cannot be null',
-          isin:['unverified','ban','false report']
+          isin:['Unreviewed','Banned','False Report']
         },
         notEmpty: {
           msg: 'reportState cannot be empty',
