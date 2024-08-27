@@ -507,21 +507,28 @@ class staffController {
         }
     }
 
-    static async getReportUser(req, res, next){
-        try{
-            const {userType} = req.decodedToken;
-            if(userType.includes('user')){
-                throw ({name: "UNAUTHORIZED"});
+    static async getReportUser(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType.includes('user')) {
+                throw ({ name: "UNAUTHORIZED" });
             }
             
-            const reportUsers = await userReport.findAll({include: [User]});
+            const reportUsers = await userReport.findAll();
+
+            const formattedReportUsers = reportUsers.map(report => ({
+                id: report.id,
+                reportContent: report.reportContent,
+                reportState: report.reportState,
+                createdAt: report.createdAt,
+            }));
 
             res.status(200).json({
-                data: reportUsers,
+                data: formattedReportUsers,
                 msg: 'User Report retrieved successfully'
-            })
-        }catch(error){
-            next(error)
+            });
+        } catch (error) {
+            next(error);
         }
     }
 
@@ -581,7 +588,7 @@ class staffController {
 
             const { reportId, state } = req.body;
 
-            if (state !== 'False Report' && state !== 'Banned') {
+            if (state !== 'False report' && state !== 'Banned') {
                 throw ({ name: "INVALID_STATE" });
             }
 
@@ -640,14 +647,7 @@ class staffController {
             if (updatedReportComment[0] === 0) {
                 throw ({ name: "REPORT_NOT_FOUND" });
             }
-
-            if (state === 'Banned') {
-                await BannedComment.create(
-                    { reportId },
-                    { transaction }
-                );
-            }
-
+            
             await transaction.commit();
 
             res.status(200).json({

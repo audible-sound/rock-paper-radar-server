@@ -50,6 +50,7 @@ class reportController{
 
             const newUserReport = await userReport.create({
                 userID: actualUser.id,
+                reporterID: req.decodedToken.id, // Assuming the reporter's ID is in the decoded token
                 reportState: 'unverified',
                 reportContent
             }, {

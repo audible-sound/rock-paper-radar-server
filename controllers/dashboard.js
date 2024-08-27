@@ -1,4 +1,4 @@
-const {User, UserProfile, sequelize, Post} = require("../models/index.js");
+const {User, UserProfile, sequelize, Post, userReport, PostTag} = require("../models/index.js");
 const { Op } = require("sequelize");
 
 class dashboardController{
@@ -552,28 +552,43 @@ class dashboardController{
             }
 
             const currentYear = new Date().getFullYear();
-            const monthlyBannedUsers = await sequelize.query(`
-                SELECT DATE_TRUNC('month', ub."createdAt") as month,
-                       COUNT(DISTINCT ub."userID") as count,
-                       json_agg(json_build_object(
-                           'id', u.id,
-                           'username', u.username,
-                           'email', u.email,
-                           'gender', u.gender,
-                           'birthDate', u."birthDate",
-                           'createdAt', u."createdAt",
-                           'profilePictureUrl', up."profilePictureUrl"
-                       )) as users
-                FROM "userBans" ub
-                JOIN "Users" u ON ub."userID" = u.id
-                LEFT JOIN "UserProfiles" up ON u.id = up."userId"
-                WHERE EXTRACT(YEAR FROM ub."createdAt") = :year
-                GROUP BY DATE_TRUNC('month', ub."createdAt")
-                ORDER BY month ASC
-            `, {
-                replacements: { year: currentYear },
-                type: sequelize.QueryTypes.SELECT
+            const startOfYear = new Date(currentYear, 0, 1);
+            const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59);
+
+            const bannedUsers = await userReport.findAll({
+                where: {
+                    reportState: 'Banned',
+                    createdAt: {
+                        [Op.between]: [startOfYear, endOfYear]
+                    }
+                },
+                include: [{
+                    model: User,
+                    as: 'ReportedUser',
+                    attributes: ['id', 'username', 'email', 'createdAt'],
+                    include: [{
+                        model: UserProfile,
+                        attributes: ['profilePictureUrl']
+                    }]
+                }],
+                order: [['createdAt', 'ASC']]
             });
+
+            const monthlyBannedUsers = bannedUsers.reduce((acc, report) => {
+                const month = report.createdAt.toLocaleString('default', { month: 'long' });
+                if (!acc[month]) {
+                    acc[month] = [];
+                }
+                acc[month].push({
+                    id: report.ReportedUser.id,
+                    username: report.ReportedUser.username,
+                    email: report.ReportedUser.email,
+                    profilePictureUrl: report.ReportedUser.UserProfile ? report.ReportedUser.UserProfile.profilePictureUrl : null,
+                    joinedDate: report.ReportedUser.createdAt,
+                    bannedDate: report.createdAt
+                });
+                return acc;
+            }, {});
 
             res.status(200).json({
                 data: monthlyBannedUsers,
@@ -591,26 +606,43 @@ class dashboardController{
                 throw ({ name: "UNAUTHORIZED" });
             }
 
-            const yearlyBannedUsers = await sequelize.query(`
-                SELECT DATE_TRUNC('year', ub."createdAt") as year,
-                       COUNT(DISTINCT ub."userID") as count,
-                       json_agg(json_build_object(
-                           'id', u.id,
-                           'username', u.username,
-                           'email', u.email,
-                           'gender', u.gender,
-                           'birthDate', u."birthDate",
-                           'createdAt', u."createdAt",
-                           'profilePictureUrl', up."profilePictureUrl"
-                       )) as users
-                FROM "userBans" ub
-                JOIN "Users" u ON ub."userID" = u.id
-                LEFT JOIN "UserProfiles" up ON u.id = up."userId"
-                GROUP BY DATE_TRUNC('year', ub."createdAt")
-                ORDER BY year ASC
-            `, {
-                type: sequelize.QueryTypes.SELECT
+            const currentYear = new Date().getFullYear();
+            const fiveYearsAgo = new Date(currentYear - 4, 0, 1);
+
+            const bannedUsers = await userReport.findAll({
+                where: {
+                    reportState: 'Banned',
+                    createdAt: {
+                        [Op.gte]: fiveYearsAgo
+                    }
+                },
+                include: [{
+                    model: User,
+                    as: 'ReportedUser',
+                    attributes: ['id', 'username', 'email', 'createdAt'],
+                    include: [{
+                        model: UserProfile,
+                        attributes: ['profilePictureUrl']
+                    }]
+                }],
+                order: [['createdAt', 'ASC']]
             });
+
+            const yearlyBannedUsers = bannedUsers.reduce((acc, report) => {
+                const year = report.createdAt.getFullYear().toString();
+                if (!acc[year]) {
+                    acc[year] = [];
+                }
+                acc[year].push({
+                    id: report.ReportedUser.id,
+                    username: report.ReportedUser.username,
+                    email: report.ReportedUser.email,
+                    profilePictureUrl: report.ReportedUser.UserProfile ? report.ReportedUser.UserProfile.profilePictureUrl : null,
+                    joinedDate: report.ReportedUser.createdAt,
+                    bannedDate: report.createdAt
+                });
+                return acc;
+            }, {});
 
             res.status(200).json({
                 data: yearlyBannedUsers,
@@ -678,6 +710,77 @@ class dashboardController{
             res.status(200).json({
                 data: formattedUsers,
                 msg: 'Total users detailed data retrieved successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getMonthlyTagDistribution(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType !== 'staff' && userType !== 'admin') {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1;
+
+            const tagDistribution = await PostTag.findAll({
+                attributes: [
+                    'name',
+                    [sequelize.fn('COUNT', sequelize.col('name')), 'count']
+                ],
+                include: [{
+                    model: Post,
+                    attributes: [],
+                    where: {
+                        [Op.and]: [
+                            sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('YEAR FROM "Post"."createdAt"')), currentYear),
+                            sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('MONTH FROM "Post"."createdAt"')), currentMonth)
+                        ]
+                    }
+                }],
+                group: ['PostTag.name'],
+                order: [[sequelize.fn('COUNT', sequelize.col('name')), 'DESC']]
+            });
+
+            res.status(200).json({
+                data: tagDistribution,
+                msg: 'Monthly tag distribution retrieved successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async getYearlyTagDistribution(req, res, next) {
+        try {
+            const { userType } = req.decodedToken;
+            if (userType !== 'staff' && userType !== 'admin') {
+                throw ({ name: "UNAUTHORIZED" });
+            }
+
+            const currentYear = new Date().getFullYear();
+
+            const tagDistribution = await PostTag.findAll({
+                attributes: [
+                    'name',
+                    [sequelize.fn('COUNT', sequelize.col('name')), 'count']
+                ],
+                include: [{
+                    model: Post,
+                    attributes: [],
+                    where: sequelize.where(sequelize.fn('EXTRACT', sequelize.literal('YEAR FROM "Post"."createdAt"')), currentYear)
+                }],
+                group: ['PostTag.name'],
+                order: [[sequelize.fn('COUNT', sequelize.col('name')), 'DESC']]
+            });
+
+            res.status(200).json({
+                data: tagDistribution,
+                msg: 'Yearly tag distribution retrieved successfully'
             });
         } catch (error) {
             next(error);

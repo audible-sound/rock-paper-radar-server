@@ -29,4 +29,7 @@ router.get('/yearlyBannedUsers', authHandler, dashboardController.getYearlyBanne
 
 router.get('/totalUsersDetailed', authHandler, dashboardController.getTotalUsersDetailed);
 
+router.get('/monthlyTagDistribution', authHandler, dashboardController.getMonthlyTagDistribution);
+router.get('/yearlyTagDistribution', authHandler, dashboardController.getYearlyTagDistribution);
+
 module.exports = router;

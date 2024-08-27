@@ -12,8 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       userReport.belongsTo(models.User, {
+        as: 'ReportedUser',
         foreignKey: 'userID'
-      })
+      });
+      userReport.belongsTo(models.User, {
+        as: 'Reporter',
+        foreignKey: 'reporterID'
+      });
     }
   }
   userReport.init({
@@ -26,6 +31,20 @@ module.exports = (sequelize, DataTypes) => {
           args: true},
         notEmpty: {
           msg: 'User ID cannot be empty',
+          args: true
+        }
+      }
+    },
+    reporterID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Reporter ID cannot be null',
+          args: true
+        },
+        notEmpty: {
+          msg: 'Reporter ID cannot be empty',
           args: true
         }
       }
